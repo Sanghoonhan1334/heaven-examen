@@ -86,33 +86,33 @@ export function WriteClient() {
 
   return (
     <HeavenLayers showStairs={false} showGate={false}>
-      <div className="container mx-auto px-4 py-12 pt-[15vh] pb-[30vh] max-w-3xl relative z-50">
-        <div className="text-center mb-6 md:mb-8 relative z-50">
-          <h1 className="text-2xl md:text-3xl font-bold mb-3 md:mb-4 bg-gradient-to-r from-blue-600 to-blue-400 bg-clip-text text-transparent drop-shadow-lg">
+      <div className="container mx-auto px-4 py-6 md:py-12 pt-[10vh] md:pt-[15vh] pb-[20vh] md:pb-[30vh] max-w-3xl relative z-50">
+        <div className="text-center mb-4 md:mb-8 relative z-50">
+          <h1 className="text-lg md:text-3xl font-bold mb-2 md:mb-4 bg-gradient-to-r from-blue-600 to-blue-400 bg-clip-text text-transparent drop-shadow-lg">
             ✍🏻 수기 작성하기
           </h1>
-          <p className="text-sm md:text-base text-gray-600">
+          <p className="text-xs md:text-base text-gray-600">
             여러분의 따뜻한 이야기를 들려주세요. 모든 답변은 선택사항입니다.
           </p>
         </div>
 
         <form onSubmit={handleSubmit} className="relative z-50">
-          <Card className="bg-white/80 backdrop-blur-sm border-2 border-blue-100/50 shadow-lg mb-6">
-            <CardHeader>
-              <CardTitle className="text-lg text-gray-700">닉네임 (선택사항)</CardTitle>
+          <Card className="bg-white/80 backdrop-blur-sm border-2 border-blue-100/50 shadow-lg mb-4 md:mb-6">
+            <CardHeader className="pb-2 md:pb-6">
+              <CardTitle className="text-sm md:text-lg text-gray-700">닉네임 (선택사항)</CardTitle>
             </CardHeader>
-            <CardContent>
+            <CardContent className="pt-0 md:pt-6">
               <Textarea
                 id="nickname"
                 placeholder="익명으로 남기려면 비워두세요"
                 value={formData.nickname || ''}
                 onChange={(e) => handleChange('nickname', e.target.value)}
-                className="min-h-[60px]"
+                className="min-h-[50px] md:min-h-[60px] text-sm md:text-base"
               />
             </CardContent>
           </Card>
 
-          <div className="space-y-6">
+          <div className="space-y-4 md:space-y-6">
             {questions.map((q, index) => (
               <Card
                 key={q.id}
@@ -121,9 +121,9 @@ export function WriteClient() {
                   transform: index % 2 === 0 ? 'rotate(0.5deg)' : 'rotate(-0.5deg)',
                 }}
               >
-                <CardHeader>
-                  <CardTitle className="text-lg text-gray-800 flex items-center gap-2">
-                    <span className="text-blue-600">
+                <CardHeader className="pb-2 md:pb-6">
+                  <CardTitle className="text-sm md:text-lg text-gray-800 flex items-center gap-1 md:gap-2">
+                    <span className="text-blue-600 text-sm md:text-base">
                       {index === 2 && '🔥'}
                       {index === 3 && '💪'}
                       {index === 4 && '⭐'}
@@ -131,32 +131,32 @@ export function WriteClient() {
                     {q.label}
                   </CardTitle>
                 </CardHeader>
-                <CardContent>
+                <CardContent className="pt-0 md:pt-6">
                   <Textarea
                     id={q.id}
                     value={formData[q.id as keyof EssayFormData] as string}
                     onChange={(e) => handleChange(q.id as keyof EssayFormData, e.target.value)}
                     placeholder={q.placeholder}
-                    className="min-h-[120px] resize-none"
+                    className="min-h-[100px] md:min-h-[120px] resize-none text-sm md:text-base"
                   />
                 </CardContent>
               </Card>
             ))}
           </div>
 
-          <div className="flex gap-4 mt-8 justify-center">
+          <div className="flex gap-2 md:gap-4 mt-6 md:mt-8 justify-center">
             <Button
               type="button"
               variant="outline"
               onClick={() => router.back()}
-              className="border-blue-300 text-blue-700"
+              className="border-blue-300 text-blue-700 text-xs md:text-base px-3 md:px-4 py-2 md:py-2"
             >
               취소
             </Button>
             <Button
               type="submit"
               disabled={isSubmitting}
-              className="bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white shadow-lg px-8"
+              className="bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white shadow-lg px-4 md:px-8 py-2 md:py-2 text-xs md:text-base"
             >
               {isSubmitting ? '제출 중...' : '수기 제출하기 ✍🏻'}
             </Button>

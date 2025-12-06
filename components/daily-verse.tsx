@@ -246,15 +246,15 @@ export function DailyVerse() {
         {!verse ? (
           <button
             onClick={handlePickVerse}
-            className="bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-white shadow-lg rounded-full p-3 flex items-center justify-center"
+            className="bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-white shadow-lg rounded-full p-2 flex items-center justify-center"
             title="성구뽑기"
           >
-            <span className="text-xl">🎲</span>
+            <span className="text-base">🎲</span>
           </button>
         ) : (
           <button
             onClick={handleVerseClick}
-            className="bg-gradient-to-br from-amber-50/95 via-yellow-50/90 to-orange-50/80 border-2 border-amber-200/50 shadow-lg rounded-full px-4 py-2 text-xs font-semibold text-amber-900 hover:opacity-80 transition-opacity backdrop-blur-sm whitespace-nowrap"
+            className="bg-gradient-to-br from-amber-50/95 via-yellow-50/90 to-orange-50/80 border-2 border-amber-200/50 shadow-lg rounded-full px-2 py-1 text-[10px] font-semibold text-amber-900 hover:opacity-80 transition-opacity backdrop-blur-sm whitespace-nowrap"
             title="오늘의 성구"
           >
             오늘의 성구
@@ -300,21 +300,21 @@ export function DailyVerse() {
         <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
           <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto bg-gradient-to-br from-amber-50/95 via-yellow-50/90 to-orange-50/80">
             <DialogHeader>
-              <DialogTitle className="text-3xl font-bold text-amber-900 flex items-center gap-3">
-                <span className="text-4xl">📖</span>
+              <DialogTitle className="text-lg md:text-3xl font-bold text-amber-900 flex items-center gap-2 md:gap-3">
+                <span className="text-xl md:text-4xl">📖</span>
                 오늘의 성구
               </DialogTitle>
             </DialogHeader>
-            <div className="mt-6 text-center">
-              <p className="text-3xl md:text-4xl font-bold text-amber-900 mb-6">
+            <div className="mt-4 md:mt-6 text-center">
+              <p className="text-lg md:text-4xl font-bold text-amber-900 mb-4 md:mb-6">
                 {verse.reference}
               </p>
-              <div className="bg-white/80 rounded-lg p-6 md:p-8 backdrop-blur-sm border-2 border-amber-200/50 shadow-md">
-                <p className="text-lg md:text-xl text-gray-800 leading-relaxed whitespace-pre-line">
+              <div className="bg-white/80 rounded-lg p-4 md:p-8 backdrop-blur-sm border-2 border-amber-200/50 shadow-md">
+                <p className="text-sm md:text-xl text-gray-800 leading-relaxed whitespace-pre-line">
                   {verse.content}
                 </p>
               </div>
-              <p className="text-sm text-amber-700 mt-6">
+              <p className="text-xs md:text-sm text-amber-700 mt-4 md:mt-6">
                 🙏 하나님의 말씀이 여러분의 하루를 인도하시길 기도합니다
               </p>
             </div>

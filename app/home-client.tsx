@@ -58,21 +58,29 @@ export function HomeClient({ initialEssays }: HomeClientProps) {
   }, [initialEssays, deletedIds])
 
   const handleDelete = async (essayId: string) => {
-    // 삭제된 ID를 추적하고 localStorage에 저장
-    setDeletedIds(prev => {
-      const next = new Set(prev).add(essayId)
-      // localStorage에 저장
-      if (typeof window !== 'undefined') {
-        localStorage.setItem('deletedEssayIds', JSON.stringify(Array.from(next)))
-      }
-      return next
-    })
-    
-    // 삭제된 수기를 즉시 state에서 제거
-    setEssays(prev => prev.filter(essay => essay.id !== essayId))
-    
-    // 서버 컴포넌트를 다시 렌더링하여 최신 데이터 가져오기
-    router.refresh()
+    try {
+      // 실제 데이터베이스에서 삭제
+      await deleteEssay(essayId)
+      
+      // 삭제된 ID를 추적하고 localStorage에 저장
+      setDeletedIds(prev => {
+        const next = new Set(prev).add(essayId)
+        // localStorage에 저장
+        if (typeof window !== 'undefined') {
+          localStorage.setItem('deletedEssayIds', JSON.stringify(Array.from(next)))
+        }
+        return next
+      })
+      
+      // 삭제된 수기를 즉시 state에서 제거
+      setEssays(prev => prev.filter(essay => essay.id !== essayId))
+      
+      // 서버 컴포넌트를 다시 렌더링하여 최신 데이터 가져오기
+      router.refresh()
+    } catch (error) {
+      console.error('Error deleting essay:', error)
+      alert('삭제 중 오류가 발생했습니다.')
+    }
   }
   const scrollContainerRef = useRef<HTMLDivElement>(null)
   const isDraggingRef = useRef(false)
@@ -155,11 +163,11 @@ export function HomeClient({ initialEssays }: HomeClientProps) {
           <p className="text-sm md:text-lg text-gray-600 mb-3 md:mb-8 max-w-2xl mx-auto mt-4 md:mt-[-100px]">
             여러분의 이야기를 들려주세요.
           </p>
-          <div className="flex items-center justify-center gap-2 md:gap-4">
-            <Link href="/write">
+          <div className="flex items-center justify-center gap-2 md:gap-4 relative z-50">
+            <Link href="/write" className="relative z-50">
               <Button
                 size="lg"
-                className="bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white shadow-lg text-xs md:text-base px-3 md:px-6 py-2 md:py-4 rounded-full"
+                className="bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white shadow-lg text-xs md:text-base px-3 md:px-6 py-2 md:py-4 rounded-full relative z-50"
               >
                 ✍🏻 수기 작성하기
               </Button>
