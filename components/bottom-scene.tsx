@@ -51,8 +51,8 @@ export function BottomScene() {
   const [isLocked] = useState(true) // 항상 고정 상태
   const [deviceType, setDeviceType] = useState<DeviceType>('desktop')
   const [positions, setPositions] = useState<CharacterPositions>(defaultPositions)
-  const [dragging, setDragging] = useState<string | null>(null)
-  const [resizing, setResizing] = useState<string | null>(null)
+  const [dragging, setDragging] = useState<keyof CharacterPositions | null>(null)
+  const [resizing, setResizing] = useState<keyof CharacterPositions | null>(null)
   const dragOffsetRef = useRef({ x: 0, y: 0 })
   const resizeStartRef = useRef({ width: 0, mouseX: 0 })
   const containerRef = useRef<HTMLDivElement>(null)
@@ -183,7 +183,7 @@ export function BottomScene() {
           ...positionsRef.current[resizing],
           width: newWidth,
         },
-      })
+      } as CharacterPositions)
       return
     }
     
