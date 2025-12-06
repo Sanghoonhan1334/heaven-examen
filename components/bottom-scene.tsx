@@ -19,30 +19,30 @@ interface CharacterPositions {
 }
 
 const defaultPositions: CharacterPositions = {
-  student1: { left: 8, bottom: 16, width: 70 },
-  student2: { left: 20, bottom: 16, width: 70 },
-  student3: { left: 32, bottom: 16, width: 70 },
-  student4: { left: 44, bottom: 16, width: 70 },
-  pastor: { left: 60, bottom: 24, width: 80 },
-  jesus: { left: 72, bottom: 32, width: 90 },
+  student1: { left: 48.99594527956346, bottom: 131, width: 107.2611451799422 },
+  student2: { left: 42.495656413997736, bottom: 115, width: 149.82049515237037 },
+  student3: { left: 38.34047458772909, bottom: 117, width: 113.55819185953617 },
+  student4: { left: 33.533874139433486, bottom: 106, width: 108.3902707914556 },
+  pastor: { left: 53.920092861081685, bottom: 132, width: 127.24956405102228 },
+  jesus: { left: 58.97162755946075, bottom: 123, width: 137.5969873161033 },
 }
 
 const defaultMobilePositions: CharacterPositions = {
-  student1: { left: 5, bottom: 16, width: 50 },
-  student2: { left: 25, bottom: 16, width: 50 },
-  student3: { left: 45, bottom: 16, width: 50 },
-  student4: { left: 65, bottom: 16, width: 50 },
-  pastor: { left: 50, bottom: 40, width: 60 },
-  jesus: { left: 75, bottom: 50, width: 70 },
+  student1: { left: 40.84879625906272, bottom: 9, width: 95.14330990817757 },
+  student2: { left: 23.150837983745454, bottom: 0, width: 124.16676767542849 },
+  student3: { left: 13.387124790563915, bottom: 11, width: 86.53197113692944 },
+  student4: { left: 0.49504950495049505, bottom: 10, width: 82.85378489339107 },
+  pastor: { left: 54.046034141720554, bottom: 6, width: 111.83219167986738 },
+  jesus: { left: 70.02127531862877, bottom: 0, width: 121.11404771273978 },
 }
 
 const defaultTabletPositions: CharacterPositions = {
-  student1: { left: 6, bottom: 16, width: 60 },
-  student2: { left: 22, bottom: 16, width: 60 },
-  student3: { left: 38, bottom: 16, width: 60 },
-  student4: { left: 54, bottom: 16, width: 60 },
-  pastor: { left: 55, bottom: 24, width: 70 },
-  jesus: { left: 73, bottom: 32, width: 80 },
+  student1: { left: 45.76973524516316, bottom: 115, width: 85.0657884671748 },
+  student2: { left: 35.32236788609684, bottom: 95, width: 119.30920814477184 },
+  student3: { left: 28.625000376450377, bottom: 96, width: 82.89473592277383 },
+  student4: { left: 20.842106594603425, bottom: 80, width: 76.973683528953 },
+  pastor: { left: 55.69078944594577, bottom: 108, width: 100.49341982817721 },
+  jesus: { left: 63.13157934363197, bottom: 103, width: 108.1249988706489 },
 }
 
 type DeviceType = 'mobile' | 'tablet' | 'desktop'
@@ -81,8 +81,12 @@ export function BottomScene() {
     positionsRef.current = positions
   }, [positions])
 
-  // 기본 위치 사용 (localStorage 무시 - 모든 환경에서 동일하게)
+  // localStorage에서 위치 불러오기 (모바일/태블릿/데스크톱 분리)
   useEffect(() => {
+    const storageKey = `characterPositions${deviceType.charAt(0).toUpperCase() + deviceType.slice(1)}`
+    
+    const saved = localStorage.getItem(storageKey)
+    
     let defaultPos: CharacterPositions
     switch (deviceType) {
       case 'mobile':
@@ -95,15 +99,28 @@ export function BottomScene() {
         defaultPos = defaultPositions
     }
     
-    setPositions(defaultPos)
-    positionsRef.current = defaultPos
+    if (saved) {
+      try {
+        const parsed = JSON.parse(saved)
+        setPositions(parsed)
+        positionsRef.current = parsed
+      } catch (e) {
+        console.error('Failed to load positions:', e)
+        setPositions(defaultPos)
+        positionsRef.current = defaultPos
+      }
+    } else {
+      setPositions(defaultPos)
+      positionsRef.current = defaultPos
+    }
   }, [deviceType])
 
-  // 위치 저장 (localStorage 저장하지 않음 - 기본값만 사용)
+  // 위치 저장 (모바일/태블릿/데스크톱 분리)
   const savePositions = useCallback((newPositions: CharacterPositions) => {
-    // 저장하지 않고 기본값만 사용 (모든 환경에서 동일하게)
-    // setPositions(newPositions)
-    // positionsRef.current = newPositions
+    setPositions(newPositions)
+    positionsRef.current = newPositions
+    const storageKey = `characterPositions${deviceType.charAt(0).toUpperCase() + deviceType.slice(1)}`
+    localStorage.setItem(storageKey, JSON.stringify(newPositions))
   }, [deviceType])
 
   // 드래그 시작

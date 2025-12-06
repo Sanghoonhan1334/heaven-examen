@@ -12,9 +12,9 @@ interface GatePosition {
 type DeviceType = 'mobile' | 'tablet' | 'desktop'
 
 const defaultGatePositions = {
-  mobile: { top: -40, left: 50, width: 40 }, // vw 기준
-  tablet: { top: -40, left: 50, width: 18 },
-  desktop: { top: -40, left: 50, width: 18 },
+  mobile: { top: -125, left: 52.59338810810025, width: 66.55935613682092 },
+  tablet: { top: -168, left: 49.97139588100686, width: 50 },
+  desktop: { top: -161, left: 49.63334609225137, width: 24.510041152325307 },
 }
 
 export function HeavenGate() {
@@ -51,18 +51,36 @@ export function HeavenGate() {
     positionRef.current = position
   }, [position])
 
-  // 기본 위치 사용 (localStorage 무시 - 모든 환경에서 동일하게)
+  // localStorage에서 위치 불러오기 (없으면 기본값 사용)
   useEffect(() => {
+    const storageKey = `heavenGatePosition${deviceType.charAt(0).toUpperCase() + deviceType.slice(1)}`
+    
+    const saved = localStorage.getItem(storageKey)
+    
     const defaultPos = defaultGatePositions[deviceType]
-    setPosition(defaultPos)
-    positionRef.current = defaultPos
+    
+    if (saved) {
+      try {
+        const parsed = JSON.parse(saved)
+        setPosition(parsed)
+        positionRef.current = parsed
+      } catch (e) {
+        console.error('Failed to load gate position:', e)
+        setPosition(defaultPos)
+        positionRef.current = defaultPos
+      }
+    } else {
+      setPosition(defaultPos)
+      positionRef.current = defaultPos
+    }
   }, [deviceType])
 
-  // 위치 저장 (localStorage 저장하지 않음 - 기본값만 사용)
+  // 위치 저장
   const savePosition = useCallback((newPosition: GatePosition) => {
-    // 저장하지 않고 기본값만 사용 (모든 환경에서 동일하게)
-    // setPosition(newPosition)
-    // positionRef.current = newPosition
+    setPosition(newPosition)
+    positionRef.current = newPosition
+    const storageKey = `heavenGatePosition${deviceType.charAt(0).toUpperCase() + deviceType.slice(1)}`
+    localStorage.setItem(storageKey, JSON.stringify(newPosition))
   }, [deviceType])
 
   // 드래그 시작
