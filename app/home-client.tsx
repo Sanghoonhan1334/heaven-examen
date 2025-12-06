@@ -105,7 +105,7 @@ export function HomeClient({ initialEssays }: HomeClientProps) {
             <Link href="/write">
               <Button
                 size="lg"
-                className="bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white shadow-lg text-lg px-8 py-6 rounded-full"
+                className="bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white shadow-lg text-sm md:text-lg px-4 md:px-8 py-3 md:py-6 rounded-full"
               >
                 ✍🏻 수기 작성하기
               </Button>
@@ -119,8 +119,8 @@ export function HomeClient({ initialEssays }: HomeClientProps) {
 
         {/* Recent Essays Grid */}
         <div className="mb-8">
-          <h2 className="text-2xl font-semibold text-gray-800 mb-6 flex items-center gap-2">
-            <span className="text-blue-500">⭐</span>
+          <h2 className="text-lg md:text-2xl font-semibold text-gray-800 mb-4 md:mb-6 flex items-center gap-2">
+            <span className="text-blue-500 text-base md:text-xl">⭐</span>
             최근 작성된 수기
           </h2>
           {initialEssays.length === 0 ? (
@@ -135,9 +135,9 @@ export function HomeClient({ initialEssays }: HomeClientProps) {
               className="overflow-x-auto pb-4 -mx-4 px-4 scrollbar-hide cursor-grab active:cursor-grabbing select-none" 
               style={{ scrollbarWidth: 'none', msOverflowStyle: 'none', WebkitOverflowScrolling: 'touch' }}
             >
-              <div className="flex gap-6 min-w-max">
+              <div className="flex gap-4 md:gap-6 min-w-max">
                 {essays.map((essay) => (
-                  <div key={essay.id} className="flex-shrink-0 w-[300px] md:w-[350px]">
+                  <div key={essay.id} className="flex-shrink-0 w-[240px] md:w-[350px]">
                     <EssayCard
                       essay={essay}
                       onClick={() => handleCardClick(essay)}

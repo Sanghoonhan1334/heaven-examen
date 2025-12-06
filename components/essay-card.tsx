@@ -57,19 +57,19 @@ export function EssayCard({
           />
         </div>
       )}
-      <CardHeader className="pb-6 pt-6">
-        <CardTitle className="text-2xl md:text-3xl font-bold text-gray-800 mb-4">
+      <CardHeader className="pb-4 md:pb-6 pt-4 md:pt-6">
+        <CardTitle className="text-lg md:text-3xl font-bold text-gray-800 mb-2 md:mb-4">
           {essay.nickname ? (
             <span>
-              <span className="text-blue-600 text-3xl md:text-4xl">✍🏻</span> {essay.nickname}님의 수기
+              <span className="text-blue-600 text-xl md:text-4xl">✍🏻</span> {essay.nickname}님의 수기
             </span>
           ) : (
             <span>
-              <span className="text-blue-600 text-3xl md:text-4xl">✍🏻</span> 익명의 수기
+              <span className="text-blue-600 text-xl md:text-4xl">✍🏻</span> 익명의 수기
             </span>
           )}
         </CardTitle>
-        <p className="text-base md:text-lg text-gray-600 font-medium">
+        <p className="text-sm md:text-lg text-gray-600 font-medium">
           {new Date(essay.created_at).toLocaleDateString('ko-KR', {
             year: 'numeric',
             month: 'long',
