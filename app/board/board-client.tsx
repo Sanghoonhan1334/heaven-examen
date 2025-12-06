@@ -158,7 +158,7 @@ export function BoardClient({ initialEssays }: BoardClientProps) {
             📚 전체 수기 보관함
           </h1>
           <p className="text-sm md:text-base text-gray-600 mb-4 md:mb-6">
-            모든 수기를 한눈에 볼 수 있습니다. 전시하고 싶은 수기를 선택할 수 있습니다.
+            모든 수기를 한눈에 볼 수 있습니다.
           </p>
           <div className="flex gap-4 justify-center">
             <Link href="/" className="inline-block">
