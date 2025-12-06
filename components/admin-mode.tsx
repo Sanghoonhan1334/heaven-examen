@@ -60,7 +60,7 @@ export function AdminModeButton() {
           onClick={handleDeactivate}
           variant="destructive"
           size="sm"
-          className="fixed bottom-4 right-4 z-50"
+          className="fixed top-4 left-4 z-50"
         >
           관리자 모드 종료
         </Button>
@@ -69,7 +69,7 @@ export function AdminModeButton() {
           onClick={() => setIsDialogOpen(true)}
           variant="outline"
           size="sm"
-          className="fixed bottom-4 right-4 z-50 opacity-50 hover:opacity-100"
+          className="fixed top-4 left-4 z-50 opacity-50 hover:opacity-100"
         >
           관리자
         </Button>

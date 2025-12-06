@@ -170,8 +170,8 @@ export function BoardClient({ initialEssays }: BoardClientProps) {
           <DailyVerse />
         </div>
         
-        {/* 모바일: 플로팅 버튼은 DailyVerse 컴포넌트 내부에서 처리 */}
-        <div className="md:hidden">
+        {/* 모바일: 오른쪽 상단 */}
+        <div className="md:hidden absolute top-4 right-4 z-40">
           <DailyVerse />
         </div>
         
