@@ -13,7 +13,7 @@ interface HeavenLayersProps {
 
 export function HeavenLayers({ children, showStairs = true, showGate = true, showHeavenGate = true }: HeavenLayersProps) {
   return (
-    <div className="relative min-h-screen bg-gradient-to-b from-sky-100 via-blue-50 to-amber-50/30 overflow-hidden">
+    <div className="relative min-h-screen bg-gradient-to-b from-sky-100 via-blue-50 to-amber-50/30 overflow-x-hidden overflow-y-visible">
       {/* 상단 레이어: 천국의 계단 + 열린 문 */}
       <div className="fixed top-0 left-0 right-0 h-[40vh] z-0 pointer-events-none">
         {/* 빛나는 효과 배경 */}
@@ -113,7 +113,7 @@ export function HeavenLayers({ children, showStairs = true, showGate = true, sho
       </div>
 
       {/* 하단 레이어: 언덕 + 캐릭터 */}
-      <div className="fixed bottom-0 left-0 right-0 z-10">
+      <div className="fixed bottom-0 left-0 right-0 z-[50] overflow-visible">
         <BottomScene />
       </div>
     </div>

@@ -9,15 +9,71 @@ import { HeavenLayers } from '@/components/heaven-layers'
 import { HeavenGate } from '@/components/heaven-gate'
 import { DailyVerse } from '@/components/daily-verse'
 import { Essay } from '@/types/essay'
+import { AdminModeButton, useAdminMode } from '@/components/admin-mode'
+import { deleteEssay } from '@/lib/actions'
+import { useRouter } from 'next/navigation'
 
 interface HomeClientProps {
   initialEssays: Essay[]
 }
 
 export function HomeClient({ initialEssays }: HomeClientProps) {
+  const router = useRouter()
+  const { isAdmin } = useAdminMode()
   const [selectedEssay, setSelectedEssay] = useState<Essay | null>(null)
   const [isModalOpen, setIsModalOpen] = useState(false)
-  const [essays] = useState<Essay[]>(initialEssays)
+  const [essays, setEssays] = useState<Essay[]>(initialEssays)
+  const [deletedIds, setDeletedIds] = useState<Set<string>>(new Set())
+
+  // localStorage에서 삭제된 ID 불러오기
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const saved = localStorage.getItem('deletedEssayIds')
+      if (saved) {
+        try {
+          const ids = JSON.parse(saved)
+          setDeletedIds(new Set(ids))
+        } catch (e) {
+          console.error('Failed to load deleted IDs:', e)
+        }
+      }
+    }
+  }, [])
+
+  // 삭제된 ID를 localStorage에 저장
+  useEffect(() => {
+    if (typeof window !== 'undefined' && deletedIds.size > 0) {
+      localStorage.setItem('deletedEssayIds', JSON.stringify(Array.from(deletedIds)))
+    }
+  }, [deletedIds])
+
+  // initialEssays가 변경되면 업데이트 (삭제된 항목 제외)
+  useEffect(() => {
+    if (deletedIds.size > 0) {
+      // 삭제된 항목을 제외하고 업데이트
+      setEssays(initialEssays.filter(essay => !deletedIds.has(essay.id)))
+    } else {
+      setEssays(initialEssays)
+    }
+  }, [initialEssays, deletedIds])
+
+  const handleDelete = async (essayId: string) => {
+    // 삭제된 ID를 추적하고 localStorage에 저장
+    setDeletedIds(prev => {
+      const next = new Set(prev).add(essayId)
+      // localStorage에 저장
+      if (typeof window !== 'undefined') {
+        localStorage.setItem('deletedEssayIds', JSON.stringify(Array.from(next)))
+      }
+      return next
+    })
+    
+    // 삭제된 수기를 즉시 state에서 제거
+    setEssays(prev => prev.filter(essay => essay.id !== essayId))
+    
+    // 서버 컴포넌트를 다시 렌더링하여 최신 데이터 가져오기
+    router.refresh()
+  }
   const scrollContainerRef = useRef<HTMLDivElement>(null)
   const isDraggingRef = useRef(false)
   const startXRef = useRef(0)
@@ -84,28 +140,26 @@ export function HomeClient({ initialEssays }: HomeClientProps) {
 
   return (
     <HeavenLayers>
-      <div className="container mx-auto px-4 py-12 pt-[15vh] pb-[30vh]">
+      <div className="container mx-auto px-4 py-4 md:py-10 pt-0 md:pt-[10vh] pb-[25vh] md:pb-[20vh]">
         {/* 오늘의 성구 - 데스크톱: 우측 상단 */}
-        <div className="hidden md:block absolute top-8 right-8 z-40">
+        <div className="hidden md:block absolute top-4 md:top-6 right-4 md:right-6 z-40">
           <DailyVerse />
         </div>
         
         {/* Header */}
-        <div className="text-center mb-12 relative z-30">
+        <div className="text-center mb-6 md:mb-10 relative z-30 mt-8 md:mt-0">
           {/* 천국 성 이미지 */}
-          <div className="relative" style={{ minHeight: '100px', marginBottom: '-120px' }}>
+          <div className="relative overflow-visible" style={{ minHeight: '180px', marginBottom: '-100px', paddingTop: '20px' }}>
             <HeavenGate />
           </div>
-          <p className="text-lg text-gray-600 mb-8 max-w-2xl mx-auto mt-[-100px]">
-            함께 공부하는 동료들의 따뜻한 다짐과 경험이 모인 곳입니다.
-            <br />
-            여러분의 이야기도 들려주세요.
+          <p className="text-sm md:text-lg text-gray-600 mb-3 md:mb-8 max-w-2xl mx-auto mt-4 md:mt-[-100px]">
+            여러분의 이야기를 들려주세요.
           </p>
-          <div className="flex items-center justify-center gap-3 md:gap-4">
+          <div className="flex items-center justify-center gap-2 md:gap-4">
             <Link href="/write">
               <Button
                 size="lg"
-                className="bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white shadow-lg text-sm md:text-lg px-4 md:px-8 py-3 md:py-6 rounded-full"
+                className="bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white shadow-lg text-xs md:text-base px-3 md:px-6 py-2 md:py-4 rounded-full"
               >
                 ✍🏻 수기 작성하기
               </Button>
@@ -118,9 +172,9 @@ export function HomeClient({ initialEssays }: HomeClientProps) {
         </div>
 
         {/* Recent Essays Grid */}
-        <div className="mb-8">
-          <h2 className="text-lg md:text-2xl font-semibold text-gray-800 mb-4 md:mb-6 flex items-center gap-2">
-            <span className="text-blue-500 text-base md:text-xl">⭐</span>
+        <div className="mb-6 md:mb-8">
+          <h2 className="text-base md:text-xl font-semibold text-gray-800 mb-3 md:mb-5 flex items-center gap-2">
+            <span className="text-blue-500 text-sm md:text-lg">⭐</span>
             최근 작성된 수기
           </h2>
           {initialEssays.length === 0 ? (
@@ -135,12 +189,13 @@ export function HomeClient({ initialEssays }: HomeClientProps) {
               className="overflow-x-auto pb-4 -mx-4 px-4 scrollbar-hide cursor-grab active:cursor-grabbing select-none" 
               style={{ scrollbarWidth: 'none', msOverflowStyle: 'none', WebkitOverflowScrolling: 'touch' }}
             >
-              <div className="flex gap-4 md:gap-6 min-w-max">
+              <div className="flex gap-3 md:gap-5 min-w-max">
                 {essays.map((essay) => (
-                  <div key={essay.id} className="flex-shrink-0 w-[240px] md:w-[350px]">
+                  <div key={essay.id} className="flex-shrink-0 w-[200px] md:w-[300px]">
                     <EssayCard
                       essay={essay}
                       onClick={() => handleCardClick(essay)}
+                      onDelete={handleDelete}
                     />
                   </div>
                 ))}
@@ -150,9 +205,9 @@ export function HomeClient({ initialEssays }: HomeClientProps) {
         </div>
 
         {/* Navigation */}
-        <div className="flex justify-center gap-4 mt-12">
+        <div className="flex justify-center gap-4 mt-6 md:mt-12 mb-4 md:mb-0">
           <Link href="/board">
-            <Button variant="outline" className="border-blue-300 text-blue-700">
+            <Button variant="outline" className="border-blue-300 text-blue-700 text-xs md:text-base px-3 md:px-4 py-2 md:py-2">
               전체 보관함 보기
             </Button>
           </Link>
@@ -163,7 +218,9 @@ export function HomeClient({ initialEssays }: HomeClientProps) {
         essay={selectedEssay}
         open={isModalOpen}
         onOpenChange={setIsModalOpen}
+        onDelete={handleDelete}
       />
+      <AdminModeButton />
     </HeavenLayers>
   )
 }

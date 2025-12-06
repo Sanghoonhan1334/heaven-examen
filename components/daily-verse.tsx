@@ -264,15 +264,15 @@ export function DailyVerse() {
 
       {/* 데스크탑: 카드 형태 */}
       <Card className="hidden md:block bg-gradient-to-br from-amber-50/90 via-yellow-50/80 to-orange-50/70 border-2 border-amber-200/50 shadow-lg backdrop-blur-sm">
-        <div className="px-4 py-3 md:px-6 md:py-4">
+        <div className="px-4 py-3 md:px-5 md:py-3">
           {!verse ? (
             // 성구를 뽑지 않았을 때: 버튼만 표시
             <div className="text-center">
               <Button
                 onClick={handlePickVerse}
-                className="bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-white shadow-md w-full"
+                className="bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-white shadow-md w-full text-sm py-2"
               >
-                <span className="text-lg mr-2">🎲</span>
+                <span className="text-base mr-2">🎲</span>
                 성구뽑기
               </Button>
             </div>
@@ -283,10 +283,10 @@ export function DailyVerse() {
               className="cursor-pointer hover:opacity-80 transition-opacity"
             >
               <div className="flex items-center gap-2 mb-1">
-                <span className="text-amber-600 text-lg md:text-xl">📖</span>
-                <h3 className="text-sm md:text-base font-bold text-amber-900">오늘의 성구</h3>
+                <span className="text-amber-600 text-base md:text-lg">📖</span>
+                <h3 className="text-sm md:text-sm font-bold text-amber-900">오늘의 성구</h3>
               </div>
-              <p className="text-base md:text-lg font-semibold text-amber-800 mt-2">
+              <p className="text-sm md:text-base font-semibold text-amber-800 mt-2">
                 {verse.reference}
               </p>
               <p className="text-xs text-amber-600 mt-1">클릭하여 내용 보기</p>

@@ -1,5 +1,6 @@
 'use server'
 
+import { revalidatePath } from 'next/cache'
 import { supabase } from './supabase'
 import { Essay, EssayFormData } from '@/types/essay'
 
@@ -89,6 +90,10 @@ export async function deleteEssay(essayId: string): Promise<void> {
     console.error('Error deleting essay:', error)
     throw error
   }
+
+  // 캐시 무효화하여 최신 데이터 가져오기
+  revalidatePath('/board')
+  revalidatePath('/')
 }
 
 export async function updateEssay(essayId: string, formData: EssayFormData): Promise<Essay> {

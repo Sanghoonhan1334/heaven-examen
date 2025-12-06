@@ -87,11 +87,11 @@ export function WriteClient() {
   return (
     <HeavenLayers showStairs={false} showGate={false}>
       <div className="container mx-auto px-4 py-12 pt-[15vh] pb-[30vh] max-w-3xl relative z-50">
-        <div className="text-center mb-8 relative z-50">
-          <h1 className="text-4xl font-bold mb-4 bg-gradient-to-r from-blue-600 to-blue-400 bg-clip-text text-transparent drop-shadow-lg">
+        <div className="text-center mb-6 md:mb-8 relative z-50">
+          <h1 className="text-2xl md:text-3xl font-bold mb-3 md:mb-4 bg-gradient-to-r from-blue-600 to-blue-400 bg-clip-text text-transparent drop-shadow-lg">
             ✍🏻 수기 작성하기
           </h1>
-          <p className="text-gray-600">
+          <p className="text-sm md:text-base text-gray-600">
             여러분의 따뜻한 이야기를 들려주세요. 모든 답변은 선택사항입니다.
           </p>
         </div>

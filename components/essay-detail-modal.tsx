@@ -9,12 +9,16 @@ import {
 } from '@/components/ui/dialog'
 import { Essay } from '@/types/essay'
 import Image from 'next/image'
+import { useAdminMode } from '@/components/admin-mode'
+import { Button } from '@/components/ui/button'
+import { deleteEssay } from '@/lib/actions'
 
 interface EssayDetailModalProps {
   essay: Essay | null
   open: boolean
   onOpenChange: (open: boolean) => void
   stickerSrc?: string
+  onDelete?: (essayId: string) => void
 }
 
 export function EssayDetailModal({
@@ -22,8 +26,25 @@ export function EssayDetailModal({
   open,
   onOpenChange,
   stickerSrc,
+  onDelete,
 }: EssayDetailModalProps) {
+  const { isAdmin } = useAdminMode()
+
   if (!essay) return null
+
+  const handleDelete = async () => {
+    if (confirm('이 수기를 삭제하시겠습니까?')) {
+      try {
+        await deleteEssay(essay.id)
+        onDelete?.(essay.id)
+        alert('수기가 삭제되었습니다.')
+        onOpenChange(false)
+      } catch (error) {
+        alert('삭제 중 오류가 발생했습니다.')
+        console.error(error)
+      }
+    }
+  }
 
   const questions = [
     { label: '공부를 시작하게 된 계기는 무엇인가요?', answer: essay.q1 },
@@ -48,19 +69,33 @@ export function EssayDetailModal({
           </div>
         )}
         <DialogHeader>
-          <DialogTitle className="text-2xl font-bold text-gray-800 flex items-center gap-2">
-            <span className="text-blue-600">✍🏻</span>
-            {essay.nickname ? `${essay.nickname}님의 수기` : '익명의 수기'}
-          </DialogTitle>
-          <DialogDescription className="text-gray-600">
-            {new Date(essay.created_at).toLocaleDateString('ko-KR', {
-              year: 'numeric',
-              month: 'long',
-              day: 'numeric',
-              hour: '2-digit',
-              minute: '2-digit',
-            })}
-          </DialogDescription>
+          <div className="flex items-start justify-between">
+            <div>
+              <DialogTitle className="text-xl md:text-2xl font-bold text-gray-800 flex items-center gap-2">
+                <span className="text-blue-600 text-lg md:text-xl">✍🏻</span>
+                {essay.nickname ? `${essay.nickname}님의 수기` : '익명의 수기'}
+              </DialogTitle>
+              <DialogDescription className="text-sm md:text-base text-gray-600">
+                {new Date(essay.created_at).toLocaleDateString('ko-KR', {
+                  year: 'numeric',
+                  month: 'long',
+                  day: 'numeric',
+                  hour: '2-digit',
+                  minute: '2-digit',
+                })}
+              </DialogDescription>
+            </div>
+            {isAdmin && (
+              <Button
+                variant="destructive"
+                size="sm"
+                onClick={handleDelete}
+                className="ml-4"
+              >
+                삭제
+              </Button>
+            )}
+          </div>
         </DialogHeader>
         <div className="space-y-6 mt-4">
           {questions.map((q, index) => (
