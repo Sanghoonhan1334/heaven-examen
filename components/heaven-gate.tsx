@@ -51,36 +51,18 @@ export function HeavenGate() {
     positionRef.current = position
   }, [position])
 
-  // localStorage에서 위치 불러오기
+  // 기본 위치 사용 (localStorage 무시 - 모든 환경에서 동일하게)
   useEffect(() => {
-    const storageKey = `heavenGatePosition${deviceType.charAt(0).toUpperCase() + deviceType.slice(1)}`
-    
-    const saved = localStorage.getItem(storageKey)
-    
     const defaultPos = defaultGatePositions[deviceType]
-    
-    if (saved) {
-      try {
-        const parsed = JSON.parse(saved)
-        setPosition(parsed)
-        positionRef.current = parsed
-      } catch (e) {
-        console.error('Failed to load gate position:', e)
-        setPosition(defaultPos)
-        positionRef.current = defaultPos
-      }
-    } else {
-      setPosition(defaultPos)
-      positionRef.current = defaultPos
-    }
+    setPosition(defaultPos)
+    positionRef.current = defaultPos
   }, [deviceType])
 
-  // 위치 저장
+  // 위치 저장 (localStorage 저장하지 않음 - 기본값만 사용)
   const savePosition = useCallback((newPosition: GatePosition) => {
-    setPosition(newPosition)
-    positionRef.current = newPosition
-    const storageKey = `heavenGatePosition${deviceType.charAt(0).toUpperCase() + deviceType.slice(1)}`
-    localStorage.setItem(storageKey, JSON.stringify(newPosition))
+    // 저장하지 않고 기본값만 사용 (모든 환경에서 동일하게)
+    // setPosition(newPosition)
+    // positionRef.current = newPosition
   }, [deviceType])
 
   // 드래그 시작

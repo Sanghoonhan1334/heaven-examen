@@ -81,12 +81,8 @@ export function BottomScene() {
     positionsRef.current = positions
   }, [positions])
 
-  // localStorage에서 위치 불러오기 (모바일/태블릿/데스크톱 분리)
+  // 기본 위치 사용 (localStorage 무시 - 모든 환경에서 동일하게)
   useEffect(() => {
-    const storageKey = `characterPositions${deviceType.charAt(0).toUpperCase() + deviceType.slice(1)}`
-    
-    const saved = localStorage.getItem(storageKey)
-    
     let defaultPos: CharacterPositions
     switch (deviceType) {
       case 'mobile':
@@ -99,28 +95,15 @@ export function BottomScene() {
         defaultPos = defaultPositions
     }
     
-    if (saved) {
-      try {
-        const parsed = JSON.parse(saved)
-        setPositions(parsed)
-        positionsRef.current = parsed
-      } catch (e) {
-        console.error('Failed to load positions:', e)
-        setPositions(defaultPos)
-        positionsRef.current = defaultPos
-      }
-    } else {
-      setPositions(defaultPos)
-      positionsRef.current = defaultPos
-    }
+    setPositions(defaultPos)
+    positionsRef.current = defaultPos
   }, [deviceType])
 
-  // 위치 저장 (모바일/태블릿/데스크톱 분리)
+  // 위치 저장 (localStorage 저장하지 않음 - 기본값만 사용)
   const savePositions = useCallback((newPositions: CharacterPositions) => {
-    setPositions(newPositions)
-    positionsRef.current = newPositions
-    const storageKey = `characterPositions${deviceType.charAt(0).toUpperCase() + deviceType.slice(1)}`
-    localStorage.setItem(storageKey, JSON.stringify(newPositions))
+    // 저장하지 않고 기본값만 사용 (모든 환경에서 동일하게)
+    // setPositions(newPositions)
+    // positionsRef.current = newPositions
   }, [deviceType])
 
   // 드래그 시작
