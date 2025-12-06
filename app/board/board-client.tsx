@@ -27,25 +27,42 @@ export function BoardClient({ initialEssays }: BoardClientProps) {
   const [isDeleting, setIsDeleting] = useState(false)
   const [deletedIds, setDeletedIds] = useState<Set<string>>(new Set())
 
-  // localStorage에서 삭제된 ID 불러오기
+  // localStorage에서 삭제된 ID 불러오기 (서버 데이터와 동기화)
   useEffect(() => {
     if (typeof window !== 'undefined') {
       const saved = localStorage.getItem('deletedEssayIds')
       if (saved) {
         try {
           const ids = JSON.parse(saved)
-          setDeletedIds(new Set(ids))
+          // 서버에서 가져온 실제 데이터에 없는 ID는 제거 (동기화)
+          const serverIds = new Set(initialEssays.map(e => e.id))
+          const validDeletedIds = ids.filter((id: string) => !serverIds.has(id))
+          
+          if (validDeletedIds.length !== ids.length) {
+            // 일부 ID가 서버에 없으면 localStorage 업데이트
+            if (validDeletedIds.length > 0) {
+              localStorage.setItem('deletedEssayIds', JSON.stringify(validDeletedIds))
+              setDeletedIds(new Set(validDeletedIds))
+            } else {
+              localStorage.removeItem('deletedEssayIds')
+              setDeletedIds(new Set())
+            }
+          } else {
+            setDeletedIds(new Set(ids))
+          }
         } catch (e) {
           console.error('Failed to load deleted IDs:', e)
         }
       }
     }
-  }, [])
+  }, [initialEssays])
 
   // 삭제된 ID를 localStorage에 저장
   useEffect(() => {
     if (typeof window !== 'undefined' && deletedIds.size > 0) {
       localStorage.setItem('deletedEssayIds', JSON.stringify(Array.from(deletedIds)))
+    } else if (typeof window !== 'undefined' && deletedIds.size === 0) {
+      localStorage.removeItem('deletedEssayIds')
     }
   }, [deletedIds])
 
