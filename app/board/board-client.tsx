@@ -27,35 +27,20 @@ export function BoardClient({ initialEssays }: BoardClientProps) {
   const [isDeleting, setIsDeleting] = useState(false)
   const [deletedIds, setDeletedIds] = useState<Set<string>>(new Set())
 
-  // localStorage에서 삭제된 ID 불러오기 (서버 데이터와 동기화)
+  // localStorage에서 삭제된 ID 불러오기
   useEffect(() => {
     if (typeof window !== 'undefined') {
       const saved = localStorage.getItem('deletedEssayIds')
       if (saved) {
         try {
           const ids = JSON.parse(saved)
-          // 서버에서 가져온 실제 데이터에 없는 ID는 제거 (동기화)
-          const serverIds = new Set(initialEssays.map(e => e.id))
-          const validDeletedIds = ids.filter((id: string) => !serverIds.has(id))
-          
-          if (validDeletedIds.length !== ids.length) {
-            // 일부 ID가 서버에 없으면 localStorage 업데이트
-            if (validDeletedIds.length > 0) {
-              localStorage.setItem('deletedEssayIds', JSON.stringify(validDeletedIds))
-              setDeletedIds(new Set(validDeletedIds))
-            } else {
-              localStorage.removeItem('deletedEssayIds')
-              setDeletedIds(new Set())
-            }
-          } else {
-            setDeletedIds(new Set(ids))
-          }
+          setDeletedIds(new Set(ids))
         } catch (e) {
           console.error('Failed to load deleted IDs:', e)
         }
       }
     }
-  }, [initialEssays])
+  }, [])
 
   // 삭제된 ID를 localStorage에 저장
   useEffect(() => {
@@ -66,15 +51,29 @@ export function BoardClient({ initialEssays }: BoardClientProps) {
     }
   }, [deletedIds])
 
-  // initialEssays가 변경되면 업데이트 (삭제된 항목 제외)
+  // initialEssays가 변경되면 업데이트 (서버 데이터만 사용, localStorage는 삭제 중에만 사용)
   useEffect(() => {
-    if (deletedIds.size > 0) {
-      // 삭제된 항목을 제외하고 업데이트
-      setEssays(initialEssays.filter(essay => !deletedIds.has(essay.id)))
-    } else {
-      setEssays(initialEssays)
+    // 서버에서 가져온 데이터를 그대로 사용 (서버가 진실의 원천)
+    // localStorage의 deletedIds는 삭제 중에만 임시로 사용하고, 서버 동기화 후 제거
+    setEssays(initialEssays)
+    
+    // 서버에 없는 ID는 localStorage에서 제거 (실제로 삭제된 것)
+    if (deletedIds.size > 0 && typeof window !== 'undefined') {
+      const serverIds = new Set(initialEssays.map(e => e.id))
+      const validDeletedIds = Array.from(deletedIds).filter(id => !serverIds.has(id))
+      
+      // 서버에 없는 ID가 있으면 localStorage 업데이트
+      if (validDeletedIds.length !== deletedIds.size) {
+        if (validDeletedIds.length > 0) {
+          localStorage.setItem('deletedEssayIds', JSON.stringify(validDeletedIds))
+          setDeletedIds(new Set(validDeletedIds))
+        } else {
+          localStorage.removeItem('deletedEssayIds')
+          setDeletedIds(new Set())
+        }
+      }
     }
-  }, [initialEssays, deletedIds])
+  }, [initialEssays])
 
   const handleCardClick = (essay: Essay) => {
     setSelectedEssay(essay)
@@ -104,59 +103,62 @@ export function BoardClient({ initialEssays }: BoardClientProps) {
     setIsDeleting(true)
     try {
       const idsToDelete = Array.from(selectedIds)
+      console.log('일괄 삭제 시작:', idsToDelete)
+      
       const deletePromises = idsToDelete.map(id => deleteEssay(id))
       await Promise.all(deletePromises)
       
-      // 삭제된 ID를 추적하고 localStorage에 저장
-      setDeletedIds(prev => {
-        const next = new Set(prev)
-        idsToDelete.forEach(id => next.add(id))
-        // localStorage에 저장
-        if (typeof window !== 'undefined') {
-          localStorage.setItem('deletedEssayIds', JSON.stringify(Array.from(next)))
-        }
-        return next
-      })
+      console.log('일괄 삭제 완료:', idsToDelete)
       
       // 삭제된 수기들을 즉시 state에서 제거
       setEssays(prev => prev.filter(essay => !selectedIds.has(essay.id)))
       setSelectedIds(new Set())
+      
+      // 삭제 후 충분한 딜레이를 주고 서버 컴포넌트를 다시 렌더링
+      // Supabase 삭제가 완전히 반영될 시간을 줌
+      await new Promise(resolve => setTimeout(resolve, 1000))
       
       // 서버 컴포넌트를 다시 렌더링하여 최신 데이터 가져오기
       router.refresh()
       
       alert(`${count}개의 수기가 삭제되었습니다.`)
     } catch (error) {
-      alert('삭제 중 오류가 발생했습니다.')
-      console.error(error)
+      const errorMessage = error instanceof Error ? error.message : '알 수 없는 오류'
+      alert(`삭제 중 오류가 발생했습니다: ${errorMessage}`)
+      console.error('Bulk delete error:', error)
     } finally {
       setIsDeleting(false)
     }
   }
 
   const handleDelete = async (essayId: string) => {
+    if (!confirm('이 수기를 삭제하시겠습니까?')) {
+      return
+    }
+    
     try {
+      console.log('삭제 시작:', essayId)
+      
       // 실제 데이터베이스에서 삭제
       await deleteEssay(essayId)
       
-      // 삭제된 ID를 추적하고 localStorage에 저장
-      setDeletedIds(prev => {
-        const next = new Set(prev).add(essayId)
-        // localStorage에 저장
-        if (typeof window !== 'undefined') {
-          localStorage.setItem('deletedEssayIds', JSON.stringify(Array.from(next)))
-        }
-        return next
-      })
+      console.log('삭제 완료:', essayId)
       
       // 삭제된 수기를 즉시 state에서 제거
       setEssays(prev => prev.filter(essay => essay.id !== essayId))
       
+      // 삭제 후 충분한 딜레이를 주고 서버 컴포넌트를 다시 렌더링
+      // Supabase 삭제가 완전히 반영될 시간을 줌
+      await new Promise(resolve => setTimeout(resolve, 1000))
+      
       // 서버 컴포넌트를 다시 렌더링하여 최신 데이터 가져오기
       router.refresh()
+      
+      alert('수기가 삭제되었습니다.')
     } catch (error) {
       console.error('Error deleting essay:', error)
-      alert('삭제 중 오류가 발생했습니다.')
+      const errorMessage = error instanceof Error ? error.message : '알 수 없는 오류'
+      alert(`삭제 중 오류가 발생했습니다: ${errorMessage}`)
     }
   }
 
@@ -185,9 +187,13 @@ export function BoardClient({ initialEssays }: BoardClientProps) {
           <p className="text-sm md:text-base text-gray-600 mb-4 md:mb-6">
             모든 수기를 한눈에 볼 수 있습니다.
           </p>
-          <div className="flex gap-4 justify-center">
-            <Link href="/" className="inline-block">
-              <Button variant="outline" className="border-blue-300 text-blue-700 px-6 py-3 min-w-[120px]">
+          <div className="flex gap-4 justify-center relative z-50">
+            <Link href="/" className="inline-block relative z-50" style={{ pointerEvents: 'auto' }}>
+              <Button 
+                variant="outline" 
+                className="border-blue-300 text-blue-700 px-6 py-3 min-w-[120px] relative z-50"
+                style={{ pointerEvents: 'auto', touchAction: 'manipulation' }}
+              >
                 홈으로
               </Button>
             </Link>

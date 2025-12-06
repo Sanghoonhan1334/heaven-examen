@@ -117,9 +117,6 @@ export function WriteClient() {
               <Card
                 key={q.id}
                 className="bg-white/80 backdrop-blur-sm border-2 border-blue-100/50 shadow-md"
-                style={{
-                  transform: index % 2 === 0 ? 'rotate(0.5deg)' : 'rotate(-0.5deg)',
-                }}
               >
                 <CardHeader className="pb-2 md:pb-6">
                   <CardTitle className="text-sm md:text-lg text-gray-800 flex items-center gap-1 md:gap-2">

@@ -78,22 +78,46 @@ export async function createEssay(formData: EssayFormData): Promise<Essay> {
 
 export async function deleteEssay(essayId: string): Promise<void> {
   if (!process.env.NEXT_PUBLIC_SUPABASE_URL || !process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY) {
-    throw new Error('Supabase is not configured. Please set NEXT_PUBLIC_SUPABASE_URL and NEXT_PUBLIC_SUPABASE_ANON_KEY in .env.local')
+    const error = new Error('Supabase is not configured. Please set NEXT_PUBLIC_SUPABASE_URL and NEXT_PUBLIC_SUPABASE_ANON_KEY in environment variables.')
+    console.error('Supabase configuration error:', {
+      hasUrl: !!process.env.NEXT_PUBLIC_SUPABASE_URL,
+      hasKey: !!process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY,
+    })
+    throw error
   }
 
-  const { error } = await supabase
+  console.log('Deleting essay with ID:', essayId)
+  console.log('Supabase URL:', process.env.NEXT_PUBLIC_SUPABASE_URL ? 'Set' : 'Not set')
+  
+  const { data, error } = await supabase
     .from('essays')
     .delete()
     .eq('id', essayId)
+    .select()
 
   if (error) {
-    console.error('Error deleting essay:', error)
-    throw error
+    console.error('Supabase delete error:', {
+      message: error.message,
+      details: error.details,
+      hint: error.hint,
+      code: error.code,
+    })
+    throw new Error(`삭제 실패: ${error.message}`)
+  }
+
+  // 삭제된 행이 있는지 확인
+  if (!data || data.length === 0) {
+    console.warn('No essay found with ID:', essayId, 'or already deleted')
+    // 이미 삭제되었거나 존재하지 않는 경우에도 성공으로 처리
+  } else {
+    console.log('Successfully deleted essay:', data)
   }
 
   // 캐시 무효화하여 최신 데이터 가져오기
   revalidatePath('/board')
   revalidatePath('/')
+  
+  console.log('Cache invalidated for /board and /')
 }
 
 export async function updateEssay(essayId: string, formData: EssayFormData): Promise<Essay> {
