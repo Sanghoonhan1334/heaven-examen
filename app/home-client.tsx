@@ -160,8 +160,12 @@ export function HomeClient({ initialEssays }: HomeClientProps) {
           <div className="relative overflow-visible" style={{ minHeight: '180px', marginBottom: '-100px', paddingTop: '20px' }}>
             <HeavenGate />
           </div>
-          <p className="text-sm md:text-lg text-gray-600 mb-3 md:mb-8 max-w-2xl mx-auto mt-4 md:mt-[-100px]">
-            여러분의 이야기를 들려주세요.
+          {/* 제목 */}
+          <h1 className="text-2xl md:text-4xl font-bold mb-3 md:mb-4 bg-gradient-to-r from-blue-600 to-blue-400 bg-clip-text text-transparent drop-shadow-lg mt-4 md:mt-[-100px]">
+            천국고시 수기문
+          </h1>
+          <p className="text-sm md:text-lg text-gray-600 mb-3 md:mb-8 max-w-2xl mx-auto">
+            천국고시 준비 과정에서 겪은 경험과 감정, 학습 방법, 동기 등을 진솔하게 기록해주세요🙏🏻
           </p>
           <div className="flex items-center justify-center gap-2 md:gap-4 relative z-50">
             <Link href="/write" className="relative z-50">
