@@ -197,6 +197,14 @@ export function BoardClient({ initialEssays }: BoardClientProps) {
                 홈으로
               </Button>
             </Link>
+            <Link href="/display" className="inline-block relative z-50" style={{ pointerEvents: 'auto' }}>
+              <Button 
+                className="bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white px-6 py-3 min-w-[120px] relative z-50 shadow-lg"
+                style={{ pointerEvents: 'auto', touchAction: 'manipulation' }}
+              >
+                🎬 전시 모드
+              </Button>
+            </Link>
           </div>
         </div>
 

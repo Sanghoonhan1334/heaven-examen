@@ -49,7 +49,7 @@ type DeviceType = 'mobile' | 'tablet' | 'desktop'
 
 export function BottomScene() {
   const [deviceType, setDeviceType] = useState<DeviceType>('desktop')
-  const [windowWidth, setWindowWidth] = useState(typeof window !== 'undefined' ? window.innerWidth : 0)
+  const [windowWidth, setWindowWidth] = useState(0) // 초기값은 0으로 설정하여 서버/클라이언트 일치
   const [positions, setPositions] = useState<CharacterPositions>(defaultPositions)
   const [dragging, setDragging] = useState<keyof CharacterPositions | null>(null)
   const [resizing, setResizing] = useState<keyof CharacterPositions | null>(null)
@@ -442,7 +442,7 @@ export function BottomScene() {
           height: deviceType === 'mobile' ? '50vh' : deviceType === 'tablet' ? '60vh' : '80vh', // 충분한 높이로 원본 이미지가 잘리지 않도록
           width: '100%',
           bottom: deviceType === 'desktop' ? '-5vh' : deviceType === 'tablet' ? '-3vh' : '-2vh', // 모든 디바이스에서 음수 마진으로 아래로 내림
-          transform: (typeof window !== 'undefined' && window.innerWidth >= 1200) ? 'scaleY(0.45)' : deviceType === 'desktop' ? 'scaleY(0.7)' : deviceType === 'tablet' ? 'scaleY(0.75)' : 'scaleY(0.8)', // 1200px 이상에서 적절하게 압축
+          transform: windowWidth > 0 && windowWidth >= 1200 ? 'scaleY(0.45)' : deviceType === 'desktop' ? 'scaleY(0.7)' : deviceType === 'tablet' ? 'scaleY(0.75)' : 'scaleY(0.8)', // 1200px 이상에서 적절하게 압축
           transformOrigin: 'bottom center', // 하단 기준으로 변환
         }}
       >

@@ -237,6 +237,11 @@ export function HomeClient({ initialEssays }: HomeClientProps) {
               전체 보관함 보기
             </Button>
           </Link>
+          <Link href="/display">
+            <Button className="bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white text-xs md:text-base px-3 md:px-4 py-2 md:py-2 shadow-lg">
+              🎬 전시 모드
+            </Button>
+          </Link>
         </div>
       </div>
 

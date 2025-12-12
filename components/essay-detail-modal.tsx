@@ -52,6 +52,8 @@ export function EssayDetailModal({
     { label: '나만의 공부 비법이나 꿀팁이 있다면 무엇인가요?', answer: essay.q3 },
     { label: '포기하고 싶을 때 어떻게 다시 마음을 다잡았나요?', answer: essay.q4 },
     { label: '내년에는 어떤 마음가짐으로 공부하고 싶나요?', answer: essay.q5 },
+    { label: '천국고시 준비는 어떠셨나요?', answer: essay.q6 },
+    { label: '응시 후 신앙의 변화가 있었다면 무엇인가요?', answer: essay.q7 },
   ]
 
   return (
@@ -108,6 +110,8 @@ export function EssayDetailModal({
                   {index === 2 && '🔥'}
                   {index === 3 && '💪'}
                   {index === 4 && '⭐'}
+                  {index === 5 && '📚'}
+                  {index === 6 && '✨'}
                 </span>
                 {q.label}
               </h3>

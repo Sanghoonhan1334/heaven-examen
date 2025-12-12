@@ -6,6 +6,8 @@ export interface Essay {
   q3: string
   q4: string
   q5: string
+  q6: string
+  q7: string
   created_at: string
 }
 
@@ -16,5 +18,7 @@ export interface EssayFormData {
   q3: string
   q4: string
   q5: string
+  q6: string
+  q7: string
 }
 

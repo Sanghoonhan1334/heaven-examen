@@ -10,6 +10,8 @@ CREATE TABLE IF NOT EXISTS essays (
   q3 TEXT NOT NULL,
   q4 TEXT NOT NULL,
   q5 TEXT NOT NULL,
+  q6 TEXT NOT NULL,
+  q7 TEXT NOT NULL,
   created_at TIMESTAMPTZ DEFAULT NOW()
 );
 
@@ -39,4 +41,19 @@ CREATE POLICY "Allow public update" ON essays
 CREATE POLICY "Allow public delete" ON essays
   FOR DELETE
   USING (true);
+
+-- 기존 테이블에 q6, q7 컬럼 추가 (마이그레이션용)
+-- 이미 테이블이 존재하는 경우에만 실행하세요
+DO $$ 
+BEGIN
+  IF NOT EXISTS (SELECT 1 FROM information_schema.columns 
+                 WHERE table_name = 'essays' AND column_name = 'q6') THEN
+    ALTER TABLE essays ADD COLUMN q6 TEXT NOT NULL DEFAULT '';
+  END IF;
+  
+  IF NOT EXISTS (SELECT 1 FROM information_schema.columns 
+                 WHERE table_name = 'essays' AND column_name = 'q7') THEN
+    ALTER TABLE essays ADD COLUMN q7 TEXT NOT NULL DEFAULT '';
+  END IF;
+END $$;
 
