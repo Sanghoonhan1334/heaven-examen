@@ -51,7 +51,25 @@ export async function getEssays(limit?: number): Promise<Essay[]> {
     throw error
   }
 
-  return data || []
+  // 각 essay에 대해 댓글 수 계산
+  if (data) {
+    const essaysWithComments = await Promise.all(
+      data.map(async (essay) => {
+        const { count } = await supabase
+          .from('comments')
+          .select('*', { count: 'exact', head: true })
+          .eq('essay_id', essay.id)
+        
+        return {
+          ...essay,
+          comments_count: count || 0
+        }
+      })
+    )
+    return essaysWithComments
+  }
+
+  return []
 }
 
 export async function createEssay(formData: EssayFormData): Promise<Essay> {

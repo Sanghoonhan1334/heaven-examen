@@ -10,6 +10,7 @@ export interface Essay {
   q7: string
   created_at: string
   likes_count?: number
+  comments_count?: number
 }
 
 export interface Comment {

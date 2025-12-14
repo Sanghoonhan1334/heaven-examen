@@ -6,6 +6,7 @@ import Image from 'next/image'
 import { useAdminMode } from '@/components/admin-mode'
 import { Button } from '@/components/ui/button'
 import { deleteEssay } from '@/lib/actions'
+import { HeartIcon, CommentIcon } from '@/components/icons'
 
 interface EssayCardProps {
   essay: Essay
@@ -119,13 +120,17 @@ export function EssayCard({
             day: 'numeric',
           })}
         </p>
-        {/* 좋아요 수 표시 */}
-        {(essay.likes_count || 0) > 0 && (
-          <div className="flex items-center gap-1 mt-2 text-xs md:text-sm text-gray-500">
-            <span>❤️</span>
-            <span>{essay.likes_count}개</span>
+        {/* 좋아요 및 댓글 수 표시 */}
+        <div className="flex items-center gap-3 mt-2 text-xs md:text-sm text-gray-600">
+          <div className="flex items-center gap-1">
+            <HeartIcon filled={(essay.likes_count || 0) > 0} className={`w-4 h-4 md:w-5 md:h-5 ${(essay.likes_count || 0) > 0 ? 'text-red-500' : 'text-gray-400'}`} />
+            <span>{essay.likes_count || 0}</span>
           </div>
-        )}
+          <div className="flex items-center gap-1">
+            <CommentIcon className="w-4 h-4 md:w-5 md:h-5 text-blue-500" />
+            <span>{essay.comments_count || 0}</span>
+          </div>
+        </div>
       </CardHeader>
     </Card>
   )

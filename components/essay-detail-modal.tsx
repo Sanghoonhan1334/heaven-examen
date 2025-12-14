@@ -14,6 +14,7 @@ import { useAdminMode } from '@/components/admin-mode'
 import { Button } from '@/components/ui/button'
 import { deleteEssay, likeEssay, getComments, createComment } from '@/lib/actions'
 import { Textarea } from '@/components/ui/textarea'
+import { HeartIcon, CommentIcon } from '@/components/icons'
 
 interface EssayDetailModalProps {
   essay: Essay | null
@@ -167,9 +168,12 @@ export function EssayDetailModal({
                 size="sm"
                 onClick={handleLike}
                 disabled={hasLiked}
-                className="flex items-center gap-1"
+                className={`flex items-center gap-1 ${hasLiked ? 'bg-red-500 hover:bg-red-600 text-white' : 'border-gray-300 hover:bg-gray-50'}`}
               >
-                <span>{hasLiked ? '❤️' : '🤍'}</span>
+                <HeartIcon 
+                  filled={hasLiked} 
+                  className={`w-4 h-4 ${hasLiked ? 'text-white' : 'text-gray-400'}`} 
+                />
                 <span>{likesCount}</span>
               </Button>
               {isAdmin && (
