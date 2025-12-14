@@ -212,10 +212,10 @@ export function HomeClient({ initialEssays }: HomeClientProps) {
             <div 
               ref={scrollContainerRef}
               onMouseDown={handleMouseDown}
-              className="overflow-x-auto pb-4 -mx-4 px-4 scrollbar-hide cursor-grab active:cursor-grabbing select-none" 
+              className="overflow-x-auto overflow-y-visible pb-4 -mx-4 px-4 scrollbar-hide cursor-grab active:cursor-grabbing select-none" 
               style={{ scrollbarWidth: 'none', msOverflowStyle: 'none', WebkitOverflowScrolling: 'touch' }}
             >
-              <div className="flex gap-3 md:gap-5 min-w-max">
+              <div className="flex gap-3 md:gap-5 min-w-max py-2">
                 {essays.map((essay) => (
                   <div key={essay.id} className="flex-shrink-0 w-[200px] md:w-[300px]">
                     <EssayCard
