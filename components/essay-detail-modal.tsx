@@ -180,17 +180,17 @@ export function EssayDetailModal({
                 <span className="text-blue-600 text-lg md:text-xl">✍🏻</span>
                 <span>{essay.nickname ? `${essay.nickname}님의 수기` : '익명의 수기'}</span>
                 <Button
-                  variant={hasLiked ? "default" : "outline"}
+                  variant="outline"
                   size="sm"
                   onClick={handleLike}
                   disabled={isLiking}
-                  className={`flex items-center gap-1 ml-2 !opacity-100 disabled:!opacity-100 ${hasLiked ? 'bg-red-500 hover:!bg-red-600 active:!bg-red-600 text-white' : 'border-gray-300 hover:!bg-gray-50 active:!bg-gray-50'}`}
+                  className="flex items-center gap-1 ml-2 !opacity-100 disabled:!opacity-100 border-gray-300 hover:!bg-gray-50 active:!bg-gray-50"
                 >
                   <HeartIcon 
                     filled={hasLiked} 
-                    className={`w-4 h-4 ${hasLiked ? 'text-white' : 'text-gray-400'}`} 
+                    className={`w-4 h-4 ${hasLiked ? 'text-red-500' : 'text-gray-400'}`} 
                   />
-                  <span>{likesCount}</span>
+                  <span className="text-gray-700">{likesCount}</span>
                 </Button>
               </DialogTitle>
               <DialogDescription className="text-sm md:text-base text-gray-600">
