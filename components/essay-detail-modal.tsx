@@ -208,7 +208,7 @@ export function EssayDetailModal({
         </div>
 
         {/* 댓글 섹션 */}
-        <div className="mt-6 pt-6 border-t border-gray-200">
+        <div className="mt-6 pt-6 border-t border-gray-200 bg-white/90 backdrop-blur-md rounded-lg p-4">
           <h3 className="text-lg font-semibold text-gray-800 mb-4">💬 댓글 ({comments.length})</h3>
           
           {/* 댓글 작성 폼 */}
@@ -218,14 +218,14 @@ export function EssayDetailModal({
               placeholder="닉네임 (선택사항)"
               value={commentNickname}
               onChange={(e) => setCommentNickname(e.target.value)}
-              className="w-full px-3 py-2 text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full px-3 py-2 text-sm border border-gray-300 rounded-md bg-white focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
             <Textarea
               placeholder="댓글을 작성해주세요..."
               value={commentContent}
               onChange={(e) => setCommentContent(e.target.value)}
               rows={3}
-              className="text-sm"
+              className="text-sm bg-white"
             />
             <Button
               onClick={handleSubmitComment}
@@ -240,12 +240,12 @@ export function EssayDetailModal({
           {/* 댓글 목록 */}
           <div className="space-y-3 max-h-60 overflow-y-auto">
             {comments.length === 0 ? (
-              <p className="text-sm text-gray-500 text-center py-4">아직 댓글이 없습니다.</p>
+              <p className="text-sm text-gray-500 text-center py-4 bg-white/80 rounded-lg">아직 댓글이 없습니다.</p>
             ) : (
               comments.map((comment) => (
                 <div
                   key={comment.id}
-                  className="p-3 rounded-lg bg-white/60 backdrop-blur-sm border border-blue-100/50"
+                  className="p-3 rounded-lg bg-white/95 backdrop-blur-sm border border-blue-200/70 shadow-sm"
                 >
                   <div className="flex items-center gap-2 mb-1">
                     <span className="font-semibold text-sm text-gray-800">
