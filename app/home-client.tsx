@@ -175,7 +175,7 @@ export function HomeClient({ initialEssays }: HomeClientProps) {
             <HeavenGate />
           </div>
           {/* 제목 */}
-          <h1 className="text-4xl md:text-6xl font-bold mb-3 md:mb-4 text-blue-600 drop-shadow-lg mt-4 md:mt-[-100px] [text-shadow:_3px_3px_6px_rgba(0,0,0,0.4),_0_0_15px_rgba(37,99,235,0.9),_0_0_25px_rgba(59,130,246,0.7),_0_0_35px_rgba(96,165,250,0.5)]">
+          <h1 className="text-4xl md:text-6xl font-bold mb-3 md:mb-4 bg-gradient-to-r from-blue-600 to-blue-400 bg-clip-text text-transparent mt-4 md:mt-[-100px] [text-shadow:_-2px_-2px_0_rgba(0,0,0,0.9),_2px_-2px_0_rgba(0,0,0,0.9),_-2px_2px_0_rgba(0,0,0,0.9),_2px_2px_0_rgba(0,0,0,0.9),_-3px_0_0_rgba(0,0,0,0.9),_3px_0_0_rgba(0,0,0,0.9),_0_-3px_0_rgba(0,0,0,0.9),_0_3px_0_rgba(0,0,0,0.9)]">
             천국고시 수기 모음
           </h1>
           <p className="text-sm md:text-lg text-gray-600 mb-3 md:mb-8 max-w-2xl mx-auto">
