@@ -39,6 +39,7 @@ export function EssayDetailModal({
   const [commentNickname, setCommentNickname] = useState('')
   const [isSubmittingComment, setIsSubmittingComment] = useState(false)
   const [isLiking, setIsLiking] = useState(false)
+  const [isHeartAnimating, setIsHeartAnimating] = useState(false)
 
   // 좋아요 상태 확인 (localStorage)
   useEffect(() => {
@@ -209,11 +210,11 @@ export function EssayDetailModal({
                   size="sm"
                   onClick={handleLike}
                   disabled={isLiking}
-                  className="flex items-center gap-1 ml-2 !opacity-100 disabled:!opacity-100 border-gray-300 hover:!bg-gray-50 active:!bg-gray-50"
+                  className="flex items-center gap-1 ml-2 !opacity-100 disabled:!opacity-100 border-gray-300 hover:!bg-gray-50 active:!bg-gray-50 active:scale-95 transition-transform duration-150"
                 >
                   <HeartIcon 
                     filled={hasLiked} 
-                    className={`w-4 h-4 ${hasLiked ? 'text-red-500' : 'text-gray-400'}`} 
+                    className={`w-4 h-4 transition-all duration-300 ${hasLiked ? 'text-red-500' : 'text-gray-400'} ${isHeartAnimating ? 'heart-click' : ''}`} 
                   />
                   <span className="text-gray-700">{likesCount}</span>
                 </Button>
