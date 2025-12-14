@@ -190,6 +190,39 @@ export async function likeEssay(essayId: string): Promise<number> {
   return (updatedData?.likes_count || 0) as number
 }
 
+// 좋아요 취소
+export async function unlikeEssay(essayId: string): Promise<number> {
+  if (!process.env.NEXT_PUBLIC_SUPABASE_URL || !process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY) {
+    throw new Error('Supabase is not configured.')
+  }
+
+  // 좋아요 수 감소 (최소 0)
+  const { data: essayData } = await supabase
+    .from('essays')
+    .select('likes_count')
+    .eq('id', essayId)
+    .single()
+
+  const currentLikes = (essayData?.likes_count || 0) as number
+  const newLikes = Math.max(0, currentLikes - 1)
+
+  const { data: updatedData, error: updateError } = await supabase
+    .from('essays')
+    .update({ likes_count: newLikes })
+    .eq('id', essayId)
+    .select('likes_count')
+    .single()
+
+  if (updateError) {
+    console.error('Error unliking essay:', updateError)
+    throw updateError
+  }
+
+  revalidatePath('/board')
+  revalidatePath('/')
+  return (updatedData?.likes_count || 0) as number
+}
+
 // 댓글 가져오기
 export async function getComments(essayId: string): Promise<Comment[]> {
   if (!process.env.NEXT_PUBLIC_SUPABASE_URL || !process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY) {

@@ -12,7 +12,7 @@ import { Essay, Comment } from '@/types/essay'
 import Image from 'next/image'
 import { useAdminMode } from '@/components/admin-mode'
 import { Button } from '@/components/ui/button'
-import { deleteEssay, likeEssay, getComments, createComment } from '@/lib/actions'
+import { deleteEssay, likeEssay, unlikeEssay, getComments, createComment } from '@/lib/actions'
 import { Textarea } from '@/components/ui/textarea'
 import { HeartIcon, CommentIcon } from '@/components/icons'
 
@@ -67,22 +67,37 @@ export function EssayDetailModal({
   if (!essay) return null
 
   const handleLike = async () => {
-    if (hasLiked) return // 이미 좋아요를 눌렀으면 무시
-    
     try {
-      const newCount = await likeEssay(essay.id)
-      setLikesCount(newCount)
-      setHasLiked(true)
+      let newCount: number
       
-      // localStorage에 저장
-      if (typeof window !== 'undefined') {
-        const likedEssays = JSON.parse(localStorage.getItem('likedEssays') || '[]')
-        likedEssays.push(essay.id)
-        localStorage.setItem('likedEssays', JSON.stringify(likedEssays))
+      if (hasLiked) {
+        // 좋아요 취소
+        newCount = await unlikeEssay(essay.id)
+        setHasLiked(false)
+        
+        // localStorage에서 제거
+        if (typeof window !== 'undefined') {
+          const likedEssays = JSON.parse(localStorage.getItem('likedEssays') || '[]')
+          const updatedLikedEssays = likedEssays.filter((id: string) => id !== essay.id)
+          localStorage.setItem('likedEssays', JSON.stringify(updatedLikedEssays))
+        }
+      } else {
+        // 좋아요 추가
+        newCount = await likeEssay(essay.id)
+        setHasLiked(true)
+        
+        // localStorage에 저장
+        if (typeof window !== 'undefined') {
+          const likedEssays = JSON.parse(localStorage.getItem('likedEssays') || '[]')
+          likedEssays.push(essay.id)
+          localStorage.setItem('likedEssays', JSON.stringify(likedEssays))
+        }
       }
+      
+      setLikesCount(newCount)
     } catch (error) {
-      console.error('Error liking essay:', error)
-      alert('좋아요를 추가하는 중 오류가 발생했습니다.')
+      console.error('Error toggling like:', error)
+      alert(hasLiked ? '좋아요를 취소하는 중 오류가 발생했습니다.' : '좋아요를 추가하는 중 오류가 발생했습니다.')
     }
   }
 
@@ -167,7 +182,6 @@ export function EssayDetailModal({
                 variant={hasLiked ? "default" : "outline"}
                 size="sm"
                 onClick={handleLike}
-                disabled={hasLiked}
                 className={`flex items-center gap-1 ${hasLiked ? 'bg-red-500 hover:bg-red-600 text-white' : 'border-gray-300 hover:bg-gray-50'}`}
               >
                 <HeartIcon 
