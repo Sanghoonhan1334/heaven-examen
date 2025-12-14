@@ -167,7 +167,20 @@ export function EssayDetailModal({
             <div className="flex-1">
               <DialogTitle className="text-xl md:text-2xl font-bold text-gray-800 flex items-center gap-2">
                 <span className="text-blue-600 text-lg md:text-xl">✍🏻</span>
-                {essay.nickname ? `${essay.nickname}님의 수기` : '익명의 수기'}
+                <span>{essay.nickname ? `${essay.nickname}님의 수기` : '익명의 수기'}</span>
+                <Button
+                  variant={hasLiked ? "default" : "outline"}
+                  size="sm"
+                  onClick={handleLike}
+                  disabled={hasLiked || isLiking}
+                  className={`flex items-center gap-1 ml-2 ${hasLiked ? 'bg-red-500 hover:bg-red-600 text-white cursor-not-allowed opacity-100' : 'border-gray-300 hover:bg-gray-50 opacity-100'}`}
+                >
+                  <HeartIcon 
+                    filled={hasLiked} 
+                    className={`w-4 h-4 ${hasLiked ? 'text-white' : 'text-gray-400'}`} 
+                  />
+                  <span>{likesCount}</span>
+                </Button>
               </DialogTitle>
               <DialogDescription className="text-sm md:text-base text-gray-600">
                 {new Date(essay.created_at).toLocaleDateString('ko-KR', {
@@ -179,21 +192,8 @@ export function EssayDetailModal({
                 })}
               </DialogDescription>
             </div>
-            <div className="flex items-center gap-2">
-              <Button
-                variant={hasLiked ? "default" : "outline"}
-                size="sm"
-                onClick={handleLike}
-                disabled={hasLiked || isLiking}
-                className={`flex items-center gap-1 ${hasLiked ? 'bg-red-500 hover:bg-red-600 text-white cursor-not-allowed' : 'border-gray-300 hover:bg-gray-50'}`}
-              >
-                <HeartIcon 
-                  filled={hasLiked} 
-                  className={`w-4 h-4 ${hasLiked ? 'text-white' : 'text-gray-400'}`} 
-                />
-                <span>{likesCount}</span>
-              </Button>
-              {isAdmin && (
+            {isAdmin && (
+              <div className="flex items-center gap-2">
                 <Button
                   variant="destructive"
                   size="sm"
@@ -201,8 +201,8 @@ export function EssayDetailModal({
                 >
                   삭제
                 </Button>
-              )}
-            </div>
+              </div>
+            )}
           </div>
         </DialogHeader>
         <div className="space-y-6 mt-4">
