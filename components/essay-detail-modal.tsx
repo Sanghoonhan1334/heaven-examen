@@ -173,7 +173,7 @@ export function EssayDetailModal({
                   size="sm"
                   onClick={handleLike}
                   disabled={hasLiked || isLiking}
-                  className={`flex items-center gap-1 ml-2 ${hasLiked ? 'bg-red-500 hover:bg-red-600 text-white cursor-not-allowed opacity-100' : 'border-gray-300 hover:bg-gray-50 opacity-100'}`}
+                  className={`flex items-center gap-1 ml-2 !opacity-100 disabled:!opacity-100 ${hasLiked ? 'bg-red-500 hover:!bg-red-600 active:!bg-red-600 text-white cursor-not-allowed' : 'border-gray-300 hover:!bg-gray-50 active:!bg-gray-50'}`}
                 >
                   <HeartIcon 
                     filled={hasLiked} 
