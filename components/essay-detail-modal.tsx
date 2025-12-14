@@ -68,36 +68,47 @@ export function EssayDetailModal({
   if (!essay) return null
 
   const handleLike = async () => {
-    // 이미 좋아요를 눌렀거나 로딩 중이면 무시
-    if (hasLiked || isLiking) return
-    
-    // localStorage에서 다시 한 번 확인 (중복 방지)
-    if (typeof window !== 'undefined') {
-      const likedEssays = JSON.parse(localStorage.getItem('likedEssays') || '[]')
-      if (likedEssays.includes(essay.id)) {
-        setHasLiked(true)
-        return
-      }
-    }
+    // 로딩 중이면 무시
+    if (isLiking) return
     
     setIsLiking(true)
+    
     try {
-      // 좋아요 추가
-      const newCount = await likeEssay(essay.id)
-      setLikesCount(newCount)
-      setHasLiked(true)
+      let newCount: number
       
-      // localStorage에 저장
-      if (typeof window !== 'undefined') {
-        const likedEssays = JSON.parse(localStorage.getItem('likedEssays') || '[]')
-        if (!likedEssays.includes(essay.id)) {
-          likedEssays.push(essay.id)
-          localStorage.setItem('likedEssays', JSON.stringify(likedEssays))
+      if (hasLiked) {
+        // 좋아요 취소
+        newCount = await unlikeEssay(essay.id)
+        setHasLiked(false)
+        
+        // localStorage에서 제거
+        if (typeof window !== 'undefined') {
+          const likedEssays = JSON.parse(localStorage.getItem('likedEssays') || '[]')
+          const updatedLikedEssays = likedEssays.filter((id: string) => id !== essay.id)
+          localStorage.setItem('likedEssays', JSON.stringify(updatedLikedEssays))
+        }
+      } else {
+        // 좋아요 추가
+        newCount = await likeEssay(essay.id)
+        setHasLiked(true)
+        
+        // localStorage에 저장
+        if (typeof window !== 'undefined') {
+          const likedEssays = JSON.parse(localStorage.getItem('likedEssays') || '[]')
+          if (!likedEssays.includes(essay.id)) {
+            likedEssays.push(essay.id)
+            localStorage.setItem('likedEssays', JSON.stringify(likedEssays))
+          }
         }
       }
+      
+      setLikesCount(newCount)
+      
+      // 0.5초 동안 중복 클릭 방지
+      await new Promise(resolve => setTimeout(resolve, 500))
     } catch (error) {
-      console.error('Error liking essay:', error)
-      alert('좋아요를 추가하는 중 오류가 발생했습니다.')
+      console.error('Error toggling like:', error)
+      alert(hasLiked ? '좋아요를 취소하는 중 오류가 발생했습니다.' : '좋아요를 추가하는 중 오류가 발생했습니다.')
     } finally {
       setIsLiking(false)
     }
@@ -172,8 +183,8 @@ export function EssayDetailModal({
                   variant={hasLiked ? "default" : "outline"}
                   size="sm"
                   onClick={handleLike}
-                  disabled={hasLiked || isLiking}
-                  className={`flex items-center gap-1 ml-2 !opacity-100 disabled:!opacity-100 ${hasLiked ? 'bg-red-500 hover:!bg-red-600 active:!bg-red-600 text-white cursor-not-allowed' : 'border-gray-300 hover:!bg-gray-50 active:!bg-gray-50'}`}
+                  disabled={isLiking}
+                  className={`flex items-center gap-1 ml-2 !opacity-100 disabled:!opacity-100 ${hasLiked ? 'bg-red-500 hover:!bg-red-600 active:!bg-red-600 text-white' : 'border-gray-300 hover:!bg-gray-50 active:!bg-gray-50'}`}
                 >
                   <HeartIcon 
                     filled={hasLiked} 
