@@ -2,7 +2,7 @@
 
 import { revalidatePath } from 'next/cache'
 import { supabase } from './supabase'
-import { Essay, EssayFormData } from '@/types/essay'
+import { Essay, EssayFormData, Comment } from '@/types/essay'
 
 export async function getEssay(essayId: string): Promise<Essay | null> {
   if (!process.env.NEXT_PUBLIC_SUPABASE_URL || !process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY) {
@@ -137,6 +137,81 @@ export async function updateEssay(essayId: string, formData: EssayFormData): Pro
     throw error
   }
 
+  return data
+}
+
+// 좋아요 추가
+export async function likeEssay(essayId: string): Promise<number> {
+  if (!process.env.NEXT_PUBLIC_SUPABASE_URL || !process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY) {
+    throw new Error('Supabase is not configured.')
+  }
+
+  // 좋아요 수 증가
+  const { data: essayData } = await supabase
+    .from('essays')
+    .select('likes_count')
+    .eq('id', essayId)
+    .single()
+
+  const currentLikes = (essayData?.likes_count || 0) as number
+
+  const { data: updatedData, error: updateError } = await supabase
+    .from('essays')
+    .update({ likes_count: currentLikes + 1 })
+    .eq('id', essayId)
+    .select('likes_count')
+    .single()
+
+  if (updateError) {
+    console.error('Error liking essay:', updateError)
+    throw updateError
+  }
+
+  revalidatePath('/board')
+  revalidatePath('/')
+  return (updatedData?.likes_count || 0) as number
+}
+
+// 댓글 가져오기
+export async function getComments(essayId: string): Promise<Comment[]> {
+  if (!process.env.NEXT_PUBLIC_SUPABASE_URL || !process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY) {
+    console.warn('Supabase not configured. Returning empty array.')
+    return []
+  }
+
+  const { data, error } = await supabase
+    .from('comments')
+    .select('*')
+    .eq('essay_id', essayId)
+    .order('created_at', { ascending: true })
+
+  if (error) {
+    console.error('Error fetching comments:', error)
+    return []
+  }
+
+  return data || []
+}
+
+// 댓글 작성
+export async function createComment(essayId: string, content: string, nickname?: string): Promise<Comment> {
+  if (!process.env.NEXT_PUBLIC_SUPABASE_URL || !process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY) {
+    throw new Error('Supabase is not configured.')
+  }
+
+  const { data, error } = await supabase
+    .from('comments')
+    .insert([{ essay_id: essayId, content, nickname: nickname || null }])
+    .select()
+    .single()
+
+  if (error) {
+    console.error('Error creating comment:', error)
+    throw error
+  }
+
+  revalidatePath('/board')
+  revalidatePath('/')
   return data
 }
 

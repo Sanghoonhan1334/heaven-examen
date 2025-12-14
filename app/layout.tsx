@@ -13,7 +13,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "천국고시 수기문 보관함",
+  title: "천국고시 수기 모음",
   description: "함께 공부하는 동료들의 따뜻한 다짐과 경험이 모인 곳",
 };
 

@@ -57,6 +57,13 @@ export function EssayCard({
       className="relative cursor-pointer transition-all hover:shadow-lg hover:scale-[1.02] border-2 shadow-md bg-gradient-to-br from-white via-amber-50/30 to-blue-50/30 border-blue-100/50"
       onClick={handleClick}
     >
+      {/* 우수 배지 (좋아요 3개 이상) */}
+      {(essay.likes_count || 0) >= 3 && (
+        <div className="absolute -top-2 -left-2 z-20 bg-gradient-to-r from-yellow-400 to-orange-400 text-white text-xs font-bold px-2 py-1 rounded-full shadow-lg flex items-center gap-1">
+          <span>⭐</span>
+          <span>우수</span>
+        </div>
+      )}
       {stickerSrc && (
         <div className="absolute -top-4 -right-4 z-10 w-16 h-16">
           <Image
@@ -112,6 +119,13 @@ export function EssayCard({
             day: 'numeric',
           })}
         </p>
+        {/* 좋아요 수 표시 */}
+        {(essay.likes_count || 0) > 0 && (
+          <div className="flex items-center gap-1 mt-2 text-xs md:text-sm text-gray-500">
+            <span>❤️</span>
+            <span>{essay.likes_count}개</span>
+          </div>
+        )}
       </CardHeader>
     </Card>
   )

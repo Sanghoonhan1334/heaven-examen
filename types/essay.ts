@@ -9,6 +9,15 @@ export interface Essay {
   q6: string
   q7: string
   created_at: string
+  likes_count?: number
+}
+
+export interface Comment {
+  id: string
+  essay_id: string
+  nickname: string | null
+  content: string
+  created_at: string
 }
 
 export interface EssayFormData {

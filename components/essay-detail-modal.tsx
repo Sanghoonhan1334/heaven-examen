@@ -1,5 +1,6 @@
 'use client'
 
+import { useState, useEffect } from 'react'
 import {
   Dialog,
   DialogContent,
@@ -7,11 +8,12 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@/components/ui/dialog'
-import { Essay } from '@/types/essay'
+import { Essay, Comment } from '@/types/essay'
 import Image from 'next/image'
 import { useAdminMode } from '@/components/admin-mode'
 import { Button } from '@/components/ui/button'
-import { deleteEssay } from '@/lib/actions'
+import { deleteEssay, likeEssay, getComments, createComment } from '@/lib/actions'
+import { Textarea } from '@/components/ui/textarea'
 
 interface EssayDetailModalProps {
   essay: Essay | null
@@ -29,8 +31,80 @@ export function EssayDetailModal({
   onDelete,
 }: EssayDetailModalProps) {
   const { isAdmin } = useAdminMode()
+  const [likesCount, setLikesCount] = useState(essay?.likes_count || 0)
+  const [hasLiked, setHasLiked] = useState(false)
+  const [comments, setComments] = useState<Comment[]>([])
+  const [commentContent, setCommentContent] = useState('')
+  const [commentNickname, setCommentNickname] = useState('')
+  const [isSubmittingComment, setIsSubmittingComment] = useState(false)
+
+  // 좋아요 상태 확인 (localStorage)
+  useEffect(() => {
+    if (!essay || typeof window === 'undefined') return
+    
+    const likedEssays = JSON.parse(localStorage.getItem('likedEssays') || '[]')
+    setHasLiked(likedEssays.includes(essay.id))
+    setLikesCount(essay.likes_count || 0)
+  }, [essay])
+
+  // 댓글 불러오기
+  useEffect(() => {
+    if (!essay || !open) return
+    
+    const loadComments = async () => {
+      try {
+        const loadedComments = await getComments(essay.id)
+        setComments(loadedComments)
+      } catch (error) {
+        console.error('Error loading comments:', error)
+      }
+    }
+    
+    loadComments()
+  }, [essay, open])
 
   if (!essay) return null
+
+  const handleLike = async () => {
+    if (hasLiked) return // 이미 좋아요를 눌렀으면 무시
+    
+    try {
+      const newCount = await likeEssay(essay.id)
+      setLikesCount(newCount)
+      setHasLiked(true)
+      
+      // localStorage에 저장
+      if (typeof window !== 'undefined') {
+        const likedEssays = JSON.parse(localStorage.getItem('likedEssays') || '[]')
+        likedEssays.push(essay.id)
+        localStorage.setItem('likedEssays', JSON.stringify(likedEssays))
+      }
+    } catch (error) {
+      console.error('Error liking essay:', error)
+      alert('좋아요를 추가하는 중 오류가 발생했습니다.')
+    }
+  }
+
+  const handleSubmitComment = async () => {
+    if (!commentContent.trim()) return
+    
+    setIsSubmittingComment(true)
+    try {
+      const newComment = await createComment(
+        essay.id,
+        commentContent.trim(),
+        commentNickname.trim() || undefined
+      )
+      setComments([...comments, newComment])
+      setCommentContent('')
+      setCommentNickname('')
+    } catch (error) {
+      console.error('Error creating comment:', error)
+      alert('댓글 작성 중 오류가 발생했습니다.')
+    } finally {
+      setIsSubmittingComment(false)
+    }
+  }
 
   const handleDelete = async () => {
     if (confirm('이 수기를 삭제하시겠습니까?')) {
@@ -72,7 +146,7 @@ export function EssayDetailModal({
         )}
         <DialogHeader>
           <div className="flex items-start justify-between">
-            <div>
+            <div className="flex-1">
               <DialogTitle className="text-xl md:text-2xl font-bold text-gray-800 flex items-center gap-2">
                 <span className="text-blue-600 text-lg md:text-xl">✍🏻</span>
                 {essay.nickname ? `${essay.nickname}님의 수기` : '익명의 수기'}
@@ -87,16 +161,27 @@ export function EssayDetailModal({
                 })}
               </DialogDescription>
             </div>
-            {isAdmin && (
+            <div className="flex items-center gap-2">
               <Button
-                variant="destructive"
+                variant={hasLiked ? "default" : "outline"}
                 size="sm"
-                onClick={handleDelete}
-                className="ml-4"
+                onClick={handleLike}
+                disabled={hasLiked}
+                className="flex items-center gap-1"
               >
-                삭제
+                <span>{hasLiked ? '❤️' : '🤍'}</span>
+                <span>{likesCount}</span>
               </Button>
-            )}
+              {isAdmin && (
+                <Button
+                  variant="destructive"
+                  size="sm"
+                  onClick={handleDelete}
+                >
+                  삭제
+                </Button>
+              )}
+            </div>
           </div>
         </DialogHeader>
         <div className="space-y-6 mt-4">
@@ -120,6 +205,68 @@ export function EssayDetailModal({
               </p>
             </div>
           ))}
+        </div>
+
+        {/* 댓글 섹션 */}
+        <div className="mt-6 pt-6 border-t border-gray-200">
+          <h3 className="text-lg font-semibold text-gray-800 mb-4">💬 댓글 ({comments.length})</h3>
+          
+          {/* 댓글 작성 폼 */}
+          <div className="mb-4 space-y-2">
+            <input
+              type="text"
+              placeholder="닉네임 (선택사항)"
+              value={commentNickname}
+              onChange={(e) => setCommentNickname(e.target.value)}
+              className="w-full px-3 py-2 text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+            />
+            <Textarea
+              placeholder="댓글을 작성해주세요..."
+              value={commentContent}
+              onChange={(e) => setCommentContent(e.target.value)}
+              rows={3}
+              className="text-sm"
+            />
+            <Button
+              onClick={handleSubmitComment}
+              disabled={!commentContent.trim() || isSubmittingComment}
+              size="sm"
+              className="w-full"
+            >
+              {isSubmittingComment ? '작성 중...' : '댓글 작성'}
+            </Button>
+          </div>
+
+          {/* 댓글 목록 */}
+          <div className="space-y-3 max-h-60 overflow-y-auto">
+            {comments.length === 0 ? (
+              <p className="text-sm text-gray-500 text-center py-4">아직 댓글이 없습니다.</p>
+            ) : (
+              comments.map((comment) => (
+                <div
+                  key={comment.id}
+                  className="p-3 rounded-lg bg-white/60 backdrop-blur-sm border border-blue-100/50"
+                >
+                  <div className="flex items-center gap-2 mb-1">
+                    <span className="font-semibold text-sm text-gray-800">
+                      {comment.nickname || '익명'}
+                    </span>
+                    <span className="text-xs text-gray-500">
+                      {new Date(comment.created_at).toLocaleDateString('ko-KR', {
+                        month: 'short',
+                        day: 'numeric',
+                        hour: '2-digit',
+                        minute: '2-digit',
+                      })}
+                    </span>
+                  </div>
+                  <p className="text-sm text-gray-700 whitespace-pre-wrap">
+                    {comment.content}
+                  </p>
+                </div>
+              ))
+            )}
+          </div>
         </div>
       </DialogContent>
     </Dialog>
