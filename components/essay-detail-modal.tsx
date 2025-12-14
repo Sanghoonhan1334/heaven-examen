@@ -73,28 +73,61 @@ export function EssayDetailModal({
     
     setIsLiking(true)
     
-    try {
-      let newCount: number
-      
-      if (hasLiked) {
-        // 좋아요 취소
-        newCount = await unlikeEssay(essay.id)
-        setHasLiked(false)
-        
-        // localStorage에서 제거
-        if (typeof window !== 'undefined') {
-          const likedEssays = JSON.parse(localStorage.getItem('likedEssays') || '[]')
-          const updatedLikedEssays = likedEssays.filter((id: string) => id !== essay.id)
-          localStorage.setItem('likedEssays', JSON.stringify(updatedLikedEssays))
+    // 원래 상태 저장 (롤백용)
+    const originalHasLiked = hasLiked
+    const originalCount = likesCount
+    
+    // 낙관적 업데이트: 즉시 UI 업데이트
+    const newHasLiked = !hasLiked
+    const optimisticCount = newHasLiked ? likesCount + 1 : Math.max(0, likesCount - 1)
+    
+    setHasLiked(newHasLiked)
+    setLikesCount(optimisticCount)
+    
+    // localStorage 즉시 업데이트
+    if (typeof window !== 'undefined') {
+      const likedEssays = JSON.parse(localStorage.getItem('likedEssays') || '[]')
+      if (newHasLiked) {
+        if (!likedEssays.includes(essay.id)) {
+          likedEssays.push(essay.id)
+          localStorage.setItem('likedEssays', JSON.stringify(likedEssays))
         }
       } else {
-        // 좋아요 추가
-        newCount = await likeEssay(essay.id)
-        setHasLiked(true)
-        
-        // localStorage에 저장
-        if (typeof window !== 'undefined') {
-          const likedEssays = JSON.parse(localStorage.getItem('likedEssays') || '[]')
+        const updatedLikedEssays = likedEssays.filter((id: string) => id !== essay.id)
+        localStorage.setItem('likedEssays', JSON.stringify(updatedLikedEssays))
+      }
+    }
+    
+    // 0.5초 동안 중복 클릭 방지 (즉시 시작)
+    setTimeout(() => {
+      setIsLiking(false)
+    }, 500)
+    
+    // 서버 요청은 백그라운드에서 처리
+    try {
+      let serverCount: number
+      
+      if (newHasLiked) {
+        serverCount = await likeEssay(essay.id)
+      } else {
+        serverCount = await unlikeEssay(essay.id)
+      }
+      
+      // 서버 응답으로 실제 값 동기화
+      setLikesCount(serverCount)
+    } catch (error) {
+      console.error('Error toggling like:', error)
+      // 에러 발생 시 원래 상태로 롤백
+      setHasLiked(originalHasLiked)
+      setLikesCount(originalCount)
+      
+      // localStorage도 롤백
+      if (typeof window !== 'undefined') {
+        const likedEssays = JSON.parse(localStorage.getItem('likedEssays') || '[]')
+        if (newHasLiked) {
+          const updatedLikedEssays = likedEssays.filter((id: string) => id !== essay.id)
+          localStorage.setItem('likedEssays', JSON.stringify(updatedLikedEssays))
+        } else {
           if (!likedEssays.includes(essay.id)) {
             likedEssays.push(essay.id)
             localStorage.setItem('likedEssays', JSON.stringify(likedEssays))
@@ -102,15 +135,7 @@ export function EssayDetailModal({
         }
       }
       
-      setLikesCount(newCount)
-      
-      // 0.5초 동안 중복 클릭 방지
-      await new Promise(resolve => setTimeout(resolve, 500))
-    } catch (error) {
-      console.error('Error toggling like:', error)
-      alert(hasLiked ? '좋아요를 취소하는 중 오류가 발생했습니다.' : '좋아요를 추가하는 중 오류가 발생했습니다.')
-    } finally {
-      setIsLiking(false)
+      alert(newHasLiked ? '좋아요를 추가하는 중 오류가 발생했습니다.' : '좋아요를 취소하는 중 오류가 발생했습니다.')
     }
   }
 
