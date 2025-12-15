@@ -80,6 +80,17 @@ export async function createEssay(formData: EssayFormData): Promise<Essay> {
     throw error
   }
 
+  console.log('Creating essay with formData:', {
+    nickname: formData.nickname || '(empty)',
+    q1: formData.q1 ? `${formData.q1.substring(0, 50)}...` : '(empty)',
+    q2: formData.q2 ? `${formData.q2.substring(0, 50)}...` : '(empty)',
+    q3: formData.q3 ? `${formData.q3.substring(0, 50)}...` : '(empty)',
+    q4: formData.q4 ? `${formData.q4.substring(0, 50)}...` : '(empty)',
+    q5: formData.q5 ? `${formData.q5.substring(0, 50)}...` : '(empty)',
+    q6: formData.q6 ? `${formData.q6.substring(0, 50)}...` : '(empty)',
+    q7: formData.q7 ? `${formData.q7.substring(0, 50)}...` : '(empty)',
+  })
+
   const { data, error } = await supabase
     .from('essays')
     .insert([formData])
@@ -87,9 +98,23 @@ export async function createEssay(formData: EssayFormData): Promise<Essay> {
     .single()
 
   if (error) {
-    console.error('Error creating essay:', error)
+    console.error('Error creating essay:', {
+      message: error.message,
+      details: error.details,
+      hint: error.hint,
+      code: error.code,
+    })
     throw error
   }
+
+  console.log('Essay created successfully:', data?.id)
+
+  // 캐시 무효화하여 최신 데이터 가져오기
+  revalidatePath('/board')
+  revalidatePath('/')
+  revalidatePath('/write')
+  
+  console.log('Cache invalidated for /board, /, and /write')
 
   return data
 }
