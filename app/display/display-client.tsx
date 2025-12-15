@@ -13,6 +13,7 @@ export function DisplayClient({ initialEssays }: DisplayClientProps) {
   const router = useRouter()
   const [currentIndex, setCurrentIndex] = useState(0)
   const [isAnimating, setIsAnimating] = useState(false)
+  const [slideDirection, setSlideDirection] = useState<'left' | 'right'>('right')
   const essays = initialEssays.filter(essay => {
     // 빈 답변이 없는 수기만 표시
     return essay.q1 || essay.q2 || essay.q3 || essay.q4 || essay.q5 || essay.q6 || essay.q7
@@ -22,9 +23,19 @@ export function DisplayClient({ initialEssays }: DisplayClientProps) {
   useEffect(() => {
     const handleKeyPress = (e: KeyboardEvent) => {
       if (e.key === 'ArrowLeft') {
-        setCurrentIndex((prev) => (prev - 1 + essays.length) % essays.length)
+        setSlideDirection('left')
+        setIsAnimating(true)
+        setTimeout(() => {
+          setCurrentIndex((prev) => (prev - 1 + essays.length) % essays.length)
+          setIsAnimating(false)
+        }, 500)
       } else if (e.key === 'ArrowRight') {
-        setCurrentIndex((prev) => (prev + 1) % essays.length)
+        setSlideDirection('right')
+        setIsAnimating(true)
+        setTimeout(() => {
+          setCurrentIndex((prev) => (prev + 1) % essays.length)
+          setIsAnimating(false)
+        }, 500)
       } else if (e.key === 'Escape') {
         router.push('/board')
       }
@@ -48,17 +59,18 @@ export function DisplayClient({ initialEssays }: DisplayClientProps) {
     )
   }
 
-  // 10초마다 다음 수기로 전환
+  // 30초마다 다음 수기로 전환
   useEffect(() => {
     const interval = setInterval(() => {
+      setSlideDirection('right')
       setIsAnimating(true)
       
-      // 페이드 아웃 애니메이션 후 다음 수기로 이동
+      // 슬라이드 아웃 애니메이션 후 다음 수기로 이동
       setTimeout(() => {
         setCurrentIndex((prev) => (prev + 1) % essays.length)
         setIsAnimating(false)
-      }, 500) // 0.5초 페이드 아웃
-    }, 10000) // 10초마다 전환
+      }, 700) // 0.7초 슬라이드 애니메이션
+    }, 30000) // 30초마다 전환
 
     return () => clearInterval(interval)
   }, [essays.length])
@@ -89,8 +101,10 @@ export function DisplayClient({ initialEssays }: DisplayClientProps) {
         <div 
           className={`flex flex-col h-full transition-all duration-700 ease-in-out relative z-[200] ${
             isAnimating 
-              ? 'opacity-0 scale-90 translate-y-4' 
-              : 'opacity-100 scale-100 translate-y-0'
+              ? slideDirection === 'right'
+                ? 'opacity-0 scale-95 translate-x-[-100px]' 
+                : 'opacity-0 scale-95 translate-x-[100px]'
+              : 'opacity-100 scale-100 translate-x-0'
           }`}
         >
           <div className="w-full max-w-[95vw] mx-auto flex-1 flex flex-col">
