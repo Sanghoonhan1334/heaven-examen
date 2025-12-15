@@ -28,14 +28,14 @@ export function DisplayClient({ initialEssays }: DisplayClientProps) {
         setTimeout(() => {
           setCurrentIndex((prev) => (prev - 1 + essays.length) % essays.length)
           setIsAnimating(false)
-        }, 500)
+        }, 1000)
       } else if (e.key === 'ArrowRight') {
         setSlideDirection('right')
         setIsAnimating(true)
         setTimeout(() => {
           setCurrentIndex((prev) => (prev + 1) % essays.length)
           setIsAnimating(false)
-        }, 500)
+        }, 1000)
       } else if (e.key === 'Escape') {
         router.push('/board')
       }
@@ -65,11 +65,11 @@ export function DisplayClient({ initialEssays }: DisplayClientProps) {
       setSlideDirection('right')
       setIsAnimating(true)
       
-      // 슬라이드 아웃 애니메이션 후 다음 수기로 이동
+      // 책 넘기 애니메이션 후 다음 수기로 이동
       setTimeout(() => {
         setCurrentIndex((prev) => (prev + 1) % essays.length)
         setIsAnimating(false)
-      }, 700) // 0.7초 슬라이드 애니메이션
+      }, 1000) // 1초 책 넘기 애니메이션
     }, 30000) // 30초마다 전환
 
     return () => clearInterval(interval)
@@ -97,15 +97,19 @@ export function DisplayClient({ initialEssays }: DisplayClientProps) {
 
   return (
     <HeavenLayers>
-      <div className="container mx-auto px-4 py-6 pt-[3vh] pb-[30vh] min-h-screen">
+      <div className="container mx-auto px-4 py-6 pt-[3vh] pb-[30vh] min-h-screen" style={{ perspective: '2000px' }}>
         <div 
-          className={`flex flex-col h-full transition-all duration-700 ease-in-out relative z-[200] ${
-            isAnimating 
+          className={`flex flex-col h-full transition-all duration-1000 ease-in-out relative z-[200]`}
+          style={{
+            transformStyle: 'preserve-3d',
+            transform: isAnimating
               ? slideDirection === 'right'
-                ? 'opacity-0 scale-95 translate-x-[-100px]' 
-                : 'opacity-0 scale-95 translate-x-[100px]'
-              : 'opacity-100 scale-100 translate-x-0'
-          }`}
+                ? 'rotateY(-180deg)'
+                : 'rotateY(180deg)'
+              : 'rotateY(0deg)',
+            transformOrigin: slideDirection === 'right' ? 'left center' : 'right center',
+            opacity: isAnimating ? 0 : 1,
+          }}
         >
           <div className="w-full max-w-[95vw] mx-auto flex-1 flex flex-col">
           {/* 헤더 */}
