@@ -75,6 +75,14 @@ export function DisplayClient({ initialEssays }: DisplayClientProps) {
     { label: '응시 후 신앙의 변화가 있었다면 무엇인가요?', answer: currentEssay.q7, emoji: '✨' },
   ].filter(q => q.answer && q.answer.trim() !== '') // 답변이 있는 질문만 표시
 
+  // 질문 개수에 따라 동적으로 열 수 결정
+  const getGridCols = (count: number) => {
+    if (count <= 2) return 'grid-cols-1 md:grid-cols-2'
+    if (count <= 4) return 'grid-cols-2 md:grid-cols-2'
+    if (count <= 6) return 'grid-cols-2 md:grid-cols-3'
+    return 'grid-cols-2 md:grid-cols-3 lg:grid-cols-4' // 7개 이상일 때
+  }
+
   return (
     <HeavenLayers>
       <div className="container mx-auto px-4 py-6 pt-[10vh] pb-[30vh] min-h-screen">
@@ -85,7 +93,7 @@ export function DisplayClient({ initialEssays }: DisplayClientProps) {
               : 'opacity-100 scale-100 translate-y-0'
           }`}
         >
-          <div className="w-full max-w-7xl mx-auto flex-1 flex flex-col">
+          <div className="w-full max-w-[95vw] mx-auto flex-1 flex flex-col">
           {/* 헤더 */}
           <div className="text-center mb-3 md:mb-4 flex-shrink-0">
             <h1 className="text-2xl md:text-4xl font-bold text-blue-600 mb-1 md:mb-2 drop-shadow-lg">
@@ -102,7 +110,7 @@ export function DisplayClient({ initialEssays }: DisplayClientProps) {
 
           {/* 수기 내용 카드 - flex로 공간 분배 */}
           <div className="bg-white/90 backdrop-blur-md rounded-2xl md:rounded-3xl shadow-2xl p-4 md:p-6 border-4 border-blue-200/50 flex-1 flex flex-col min-h-0">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-3 md:gap-4 flex-1 overflow-hidden">
+            <div className={`grid ${getGridCols(questions.length)} gap-3 md:gap-4 flex-1 overflow-hidden`}>
               {questions.map((q, index) => (
                 <div
                   key={index}
