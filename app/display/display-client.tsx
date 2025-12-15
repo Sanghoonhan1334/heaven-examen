@@ -85,7 +85,7 @@ export function DisplayClient({ initialEssays }: DisplayClientProps) {
 
   return (
     <HeavenLayers>
-      <div className="container mx-auto px-4 py-6 pt-[10vh] pb-[30vh] min-h-screen">
+      <div className="container mx-auto px-4 py-6 pt-[3vh] pb-[30vh] min-h-screen">
         <div 
           className={`flex flex-col h-full transition-all duration-700 ease-in-out relative z-[200] ${
             isAnimating 
@@ -95,7 +95,7 @@ export function DisplayClient({ initialEssays }: DisplayClientProps) {
         >
           <div className="w-full max-w-[95vw] mx-auto flex-1 flex flex-col">
           {/* 헤더 */}
-          <div className="text-center mb-3 md:mb-4 flex-shrink-0">
+          <div className="text-center mb-2 md:mb-3 flex-shrink-0">
             <h1 className="text-2xl md:text-4xl font-bold text-blue-600 mb-1 md:mb-2 drop-shadow-lg">
               {currentEssay.nickname ? `${currentEssay.nickname}님의 수기` : '익명의 수기'}
             </h1>
