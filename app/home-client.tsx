@@ -382,7 +382,7 @@ export function HomeClient({ initialEssays }: HomeClientProps) {
               </svg>
             ) : (
               <svg className="w-4 h-4 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 10h16M4 14h16M4 18h16" />
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 4v16M12 4v16M18 4v16" />
               </svg>
             )}
             <span className="text-[8px] text-gray-600">모드</span>
