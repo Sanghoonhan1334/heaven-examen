@@ -1,5 +1,6 @@
 'use client'
 
+import { useState } from 'react'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Essay } from '@/types/essay'
 import Image from 'next/image'
@@ -16,6 +17,7 @@ interface EssayCardProps {
   checked?: boolean
   onCheckChange?: (checked: boolean) => void
   onDelete?: (essayId: string) => void
+  showContent?: boolean
 }
 
 export function EssayCard({
@@ -26,8 +28,18 @@ export function EssayCard({
   checked = false,
   onCheckChange,
   onDelete,
+  showContent = false,
 }: EssayCardProps) {
   const { isAdmin } = useAdminMode()
+  
+  // q7 (응시 후 신앙의 변화) 답변만 표시
+  const [isExpanded, setIsExpanded] = useState(false)
+  const answer = showContent ? (essay.q7 && essay.q7.trim() !== '' ? essay.q7 : null) : null
+  const maxLength = 80 // 최대 표시 길이
+  const shouldTruncate = answer && answer.length > maxLength
+  const displayText = answer && shouldTruncate && !isExpanded 
+    ? answer.substring(0, maxLength) + '...'
+    : answer
 
   const handleClick = (e: React.MouseEvent) => {
     if (showCheckbox && (e.target as HTMLElement).closest('input[type="checkbox"]')) {
@@ -55,7 +67,11 @@ export function EssayCard({
 
   return (
     <Card
-      className="relative cursor-pointer transition-all hover:shadow-lg hover:scale-[1.02] border-2 shadow-md bg-gradient-to-br from-white via-amber-50/30 to-blue-50/30 border-blue-100/50 h-full flex flex-col"
+      className={`relative cursor-pointer transition-all hover:shadow-lg hover:scale-[1.02] border-2 shadow-md border-blue-100/50 h-full flex flex-col ${
+        showContent 
+          ? 'bg-gradient-to-br from-white/95 via-amber-50/80 to-blue-50/80' 
+          : 'bg-gradient-to-br from-white via-amber-50/30 to-blue-50/30'
+      }`}
       onClick={handleClick}
     >
       {/* 우수 배지 (좋아요 3개 이상) */}
@@ -132,6 +148,26 @@ export function EssayCard({
           </div>
         </div>
       </CardHeader>
+      
+      {/* 세로 모드에서 내용 표시 */}
+      {showContent && displayText && (
+        <CardContent className="px-2 md:px-6 pb-2 md:pb-5 pt-0">
+          <p className="text-[10px] text-gray-700 leading-relaxed font-bold">
+            {displayText}
+          </p>
+          {shouldTruncate && (
+            <button
+              onClick={(e) => {
+                e.stopPropagation()
+                setIsExpanded(!isExpanded)
+              }}
+              className="text-[9px] text-blue-600 mt-1 hover:underline"
+            >
+              {isExpanded ? '접기' : '더보기'}
+            </button>
+          )}
+        </CardContent>
+      )}
     </Card>
   )
 }

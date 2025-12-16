@@ -12,6 +12,7 @@ import { Essay } from '@/types/essay'
 import { AdminModeButton, useAdminMode } from '@/components/admin-mode'
 import { deleteEssay } from '@/lib/actions'
 import { useRouter } from 'next/navigation'
+import { HeartIcon, CommentIcon } from '@/components/icons'
 
 interface HomeClientProps {
   initialEssays: Essay[]
@@ -301,17 +302,37 @@ export function HomeClient({ initialEssays }: HomeClientProps) {
               )}
             </div>
           ) : (
-            <div className="grid grid-cols-2 md:grid-cols-3 gap-3 md:gap-5">
-              {essays.map((essay) => (
-                <div key={essay.id} className="w-full">
-                  <EssayCard
-                    essay={essay}
-                    onClick={() => handleCardClick(essay)}
-                    onDelete={handleDelete}
-                  />
+            <>
+              {/* 모바일 세로 모드: 전체 화면 덮기 */}
+              <div className="md:hidden fixed inset-0 z-40 overflow-y-auto pt-20 pb-24">
+                <div className="px-4 py-4">
+                  <div className="grid grid-cols-2 gap-3 max-w-2xl mx-auto">
+                    {essays.map((essay) => (
+                      <div key={essay.id} className="w-full">
+                        <EssayCard
+                          essay={essay}
+                          onClick={() => handleCardClick(essay)}
+                          onDelete={handleDelete}
+                          showContent={true}
+                        />
+                      </div>
+                    ))}
+                  </div>
                 </div>
-              ))}
-            </div>
+              </div>
+              {/* 데스크톱 세로 모드: 기존 레이아웃 */}
+              <div className="hidden md:grid grid-cols-2 md:grid-cols-3 gap-3 md:gap-5">
+                {essays.map((essay) => (
+                  <div key={essay.id} className="w-full">
+                    <EssayCard
+                      essay={essay}
+                      onClick={() => handleCardClick(essay)}
+                      onDelete={handleDelete}
+                    />
+                  </div>
+                ))}
+              </div>
+            </>
           )}
         </div>
 
@@ -340,7 +361,7 @@ export function HomeClient({ initialEssays }: HomeClientProps) {
       
       {/* 모바일 하단 네비게이션 바 */}
       <div className="fixed bottom-0 left-0 right-0 z-50 md:hidden bg-white/95 backdrop-blur-sm border-t border-gray-200 shadow-lg pb-2">
-        <div className="grid grid-cols-5 items-center px-2 py-0.5 max-w-screen-sm mx-auto">
+        <div className="grid grid-cols-5 items-center px-2 pt-2 pb-0.5 max-w-screen-sm mx-auto">
           {/* 홈 버튼 */}
           <Link href="/" className="flex flex-col items-center gap-0 py-0.5 px-1 rounded-lg active:bg-gray-100 transition-colors">
             <svg className="w-4 h-4 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
