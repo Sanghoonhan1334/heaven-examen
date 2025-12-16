@@ -26,7 +26,7 @@ export function HomeClient({ initialEssays }: HomeClientProps) {
   const [essays, setEssays] = useState<Essay[]>(initialEssays)
   const [deletedIds, setDeletedIds] = useState<Set<string>>(new Set())
   const [showScrollHint, setShowScrollHint] = useState(true)
-  const [layoutMode, setLayoutMode] = useState<'horizontal' | 'vertical'>('horizontal')
+  const [layoutMode, setLayoutMode] = useState<'horizontal' | 'vertical'>('vertical')
 
   // localStorage에서 삭제된 ID 불러오기
   useEffect(() => {
