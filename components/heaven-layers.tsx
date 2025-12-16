@@ -113,7 +113,7 @@ export function HeavenLayers({ children, showStairs = true, showGate = true, sho
       </div>
 
       {/* 하단 레이어: 언덕 + 캐릭터 */}
-      <div className="fixed bottom-0 left-0 right-0 z-[50] overflow-visible">
+      <div className="fixed bottom-0 md:bottom-0 left-0 right-0 z-[50] overflow-visible md:pb-0 pb-[70px]">
         <BottomScene />
       </div>
     </div>

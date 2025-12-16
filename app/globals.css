@@ -192,3 +192,19 @@
 .heart-click {
   animation: heart-beat 0.3s ease-in-out;
 }
+
+/* 스크롤 힌트 애니메이션 */
+@keyframes scroll-hint-glow {
+  0%, 100% {
+    opacity: 0.6;
+    transform: translateX(0) scale(1);
+  }
+  50% {
+    opacity: 1;
+    transform: translateX(4px) scale(1.1);
+  }
+}
+
+.animate-scroll-hint {
+  animation: scroll-hint-glow 1.5s ease-in-out infinite;
+}

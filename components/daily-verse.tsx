@@ -241,8 +241,8 @@ export function DailyVerse() {
 
   return (
     <>
-      {/* 모바일: 인라인 버튼 (수기 작성하기 오른쪽) */}
-      <div className="md:hidden">
+      {/* 모바일: 인라인 버튼 (수기 작성하기 오른쪽) - 상단용 */}
+      <div className="md:hidden hidden">
         {!verse ? (
           <button
             onClick={handlePickVerse}
@@ -258,6 +258,33 @@ export function DailyVerse() {
             title="오늘의 성구"
           >
             오늘의 성구
+          </button>
+        )}
+      </div>
+      
+      {/* 모바일: 하단 네비게이션 바용 */}
+      <div className="md:hidden">
+        {!verse ? (
+          <button
+            onClick={handlePickVerse}
+            className="flex flex-col items-center gap-0 py-0.5 px-1 rounded-lg active:bg-gray-100 transition-colors"
+            title="성구뽑기"
+          >
+            <svg className="w-4 h-4 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
+            </svg>
+            <span className="text-[8px] text-gray-600">성구</span>
+          </button>
+        ) : (
+          <button
+            onClick={handleVerseClick}
+            className="flex flex-col items-center gap-0 py-0.5 px-1 rounded-lg active:bg-gray-100 transition-colors"
+            title="오늘의 성구"
+          >
+            <svg className="w-4 h-4 text-amber-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
+            </svg>
+            <span className="text-[8px] text-amber-600">성구</span>
           </button>
         )}
       </div>

@@ -164,7 +164,7 @@ export function BoardClient({ initialEssays }: BoardClientProps) {
 
   return (
     <HeavenLayers>
-      <div className="container mx-auto px-4 py-12 pt-[15vh] pb-[30vh]">
+      <div className="container mx-auto px-4 py-12 pt-[15vh] pb-[120px] md:pb-[30vh]">
         {/* 오늘의 성구 - 데스크톱: 우측 상단 */}
         <div className="hidden md:block absolute top-8 right-8 z-40">
           <DailyVerse />
@@ -256,6 +256,41 @@ export function BoardClient({ initialEssays }: BoardClientProps) {
         onDelete={handleDelete}
       />
       <AdminModeButton />
+      
+      {/* 모바일 하단 네비게이션 바 */}
+      <div className="fixed bottom-0 left-0 right-0 z-50 md:hidden bg-white/95 backdrop-blur-sm border-t border-gray-200 shadow-lg pb-2">
+        <div className="grid grid-cols-4 items-center px-2 py-0.5 max-w-screen-sm mx-auto">
+          {/* 홈 버튼 */}
+          <Link href="/" className="flex flex-col items-center gap-0 py-0.5 px-1 rounded-lg active:bg-gray-100 transition-colors">
+            <svg className="w-4 h-4 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
+            </svg>
+            <span className="text-[8px] text-gray-600">홈</span>
+          </Link>
+          
+          {/* 수기 작성 버튼 (가운데, 큰 + 버튼) */}
+          <div className="flex justify-center">
+            <Link href="/write" className="flex items-center justify-center w-8 h-8 -mt-1.5 bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 rounded-full shadow-lg active:scale-95 transition-transform aspect-square">
+              <svg className="w-3.5 h-3.5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M12 4v16m8-8H4" />
+              </svg>
+            </Link>
+          </div>
+          
+          {/* 전시 모드 버튼 */}
+          <Link href="/display" className="flex flex-col items-center gap-0 py-0.5 px-1 rounded-lg active:bg-gray-100 transition-colors">
+            <svg className="w-4 h-4 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z" />
+            </svg>
+            <span className="text-[8px] text-gray-600">전시</span>
+          </Link>
+          
+          {/* 오늘의 성구 버튼 - 하단 네비게이션용 */}
+          <div className="flex flex-col items-center gap-0 py-0.5 px-1">
+            <DailyVerse />
+          </div>
+        </div>
+      </div>
     </HeavenLayers>
   )
 }

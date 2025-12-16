@@ -55,7 +55,7 @@ export function EssayCard({
 
   return (
     <Card
-      className="relative cursor-pointer transition-all hover:shadow-lg hover:scale-[1.02] border-2 shadow-md bg-gradient-to-br from-white via-amber-50/30 to-blue-50/30 border-blue-100/50"
+      className="relative cursor-pointer transition-all hover:shadow-lg hover:scale-[1.02] border-2 shadow-md bg-gradient-to-br from-white via-amber-50/30 to-blue-50/30 border-blue-100/50 h-full flex flex-col"
       onClick={handleClick}
     >
       {/* 우수 배지 (좋아요 3개 이상) */}
@@ -101,19 +101,19 @@ export function EssayCard({
           </Button>
         </div>
       )}
-      <CardHeader className="pb-3 md:pb-5 pt-3 md:pt-5">
-        <CardTitle className="text-sm md:text-xl font-bold text-gray-800 mb-1 md:mb-3">
+      <CardHeader className="pb-2 md:pb-5 pt-2 md:pt-5 px-2 md:px-6 flex-1 flex flex-col justify-between">
+        <CardTitle className="text-xs md:text-xl font-bold text-gray-800 mb-1 md:mb-3 leading-tight">
           {essay.nickname ? (
             <span>
-              <span className="text-blue-600 text-base md:text-2xl">✍🏻</span> {essay.nickname}님의 수기
+              <span className="text-blue-600 text-sm md:text-2xl">✍🏻</span> <span className="text-xs md:text-xl">{essay.nickname}님의 수기</span>
             </span>
           ) : (
             <span>
-              <span className="text-blue-600 text-base md:text-2xl">✍🏻</span> 익명의 수기
+              <span className="text-blue-600 text-sm md:text-2xl">✍🏻</span> <span className="text-xs md:text-xl">익명의 수기</span>
             </span>
           )}
         </CardTitle>
-        <p className="text-xs md:text-base text-gray-600 font-medium">
+        <p className="hidden md:block text-xs md:text-base text-gray-600 font-medium">
           {new Date(essay.created_at).toLocaleDateString('ko-KR', {
             year: 'numeric',
             month: 'long',
@@ -121,13 +121,13 @@ export function EssayCard({
           })}
         </p>
         {/* 좋아요 및 댓글 수 표시 */}
-        <div className="flex items-center gap-3 mt-2 text-xs md:text-sm text-gray-600">
-          <div className="flex items-center gap-1">
-            <HeartIcon filled={(essay.likes_count || 0) > 0} className={`w-4 h-4 md:w-5 md:h-5 ${(essay.likes_count || 0) > 0 ? 'text-red-500' : 'text-gray-400'}`} />
+        <div className="flex items-center gap-2 md:gap-3 mt-1 md:mt-2 text-[10px] md:text-sm text-gray-600">
+          <div className="flex items-center gap-0.5 md:gap-1">
+            <HeartIcon filled={(essay.likes_count || 0) > 0} className={`w-3.5 h-3.5 md:w-5 md:h-5 ${(essay.likes_count || 0) > 0 ? 'text-red-500' : 'text-gray-400'}`} />
             <span>{essay.likes_count || 0}</span>
           </div>
-          <div className="flex items-center gap-1">
-            <CommentIcon className="w-4 h-4 md:w-5 md:h-5 text-blue-500" />
+          <div className="flex items-center gap-0.5 md:gap-1">
+            <CommentIcon className="w-3.5 h-3.5 md:w-5 md:h-5 text-blue-500" />
             <span>{essay.comments_count || 0}</span>
           </div>
         </div>
