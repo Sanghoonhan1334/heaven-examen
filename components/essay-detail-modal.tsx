@@ -196,6 +196,7 @@ export function EssayDetailModal({
               width={80}
               height={80}
               className="drop-shadow-lg"
+              unoptimized
             />
           </div>
         )}

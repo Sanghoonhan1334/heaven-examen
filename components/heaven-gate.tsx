@@ -78,6 +78,7 @@ export function HeavenGate() {
             className="w-full h-auto object-contain drop-shadow-2xl pointer-events-none select-none"
             style={{ filter: 'drop-shadow(0 0 40px rgba(255, 215, 0, 0.6))' }}
             draggable={false}
+            unoptimized
             onError={(e) => {
               e.currentTarget.style.display = 'none'
             }}

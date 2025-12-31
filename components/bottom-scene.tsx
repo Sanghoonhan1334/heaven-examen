@@ -402,6 +402,7 @@ export function BottomScene() {
           className="w-full h-auto object-contain select-none"
           style={{ pointerEvents: 'none', userSelect: 'none' }}
           draggable={false}
+          unoptimized
           onError={(e) => {
             e.currentTarget.style.display = 'none'
           }}

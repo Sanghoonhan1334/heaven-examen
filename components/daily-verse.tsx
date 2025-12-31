@@ -231,11 +231,16 @@ export function DailyVerse() {
     
     setVerse(pickedVerse)
     setHasPickedToday(true)
+    // 바로 모달 열기
+    setIsModalOpen(true)
   }
 
   const handleVerseClick = () => {
     if (verse) {
       setIsModalOpen(true)
+    } else {
+      // 성구가 없으면 뽑고 바로 모달 열기
+      handlePickVerse()
     }
   }
 

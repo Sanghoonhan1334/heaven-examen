@@ -7,7 +7,7 @@ import { Essay } from '@/types/essay'
 import { HomeClient } from './home-client'
 
 export default async function Home() {
-  const essays = await getEssays(12)
+  const essays = await getEssays()
 
   return <HomeClient initialEssays={essays} />
 }

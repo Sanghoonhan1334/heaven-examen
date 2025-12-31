@@ -32,6 +32,7 @@ export function HeavenLayers({ children, showStairs = true, showGate = true, sho
                 height={400}
                 className="w-full h-auto drop-shadow-2xl"
                 style={{ filter: 'drop-shadow(0 0 30px rgba(255, 215, 0, 0.5))' }}
+                unoptimized
                 onError={(e) => {
                   e.currentTarget.style.display = 'none'
                 }}
@@ -49,6 +50,7 @@ export function HeavenLayers({ children, showStairs = true, showGate = true, sho
               width={1200}
               height={200}
               className="w-full h-full object-cover object-bottom"
+              unoptimized
               onError={(e) => {
                 e.currentTarget.style.display = 'none'
               }}
@@ -99,6 +101,7 @@ export function HeavenLayers({ children, showStairs = true, showGate = true, sho
               width={1920}
               height={1080}
               className="w-full h-full object-cover"
+              unoptimized
               onError={(e) => {
                 e.currentTarget.style.display = 'none'
               }}

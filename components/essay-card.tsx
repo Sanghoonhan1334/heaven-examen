@@ -89,6 +89,7 @@ export function EssayCard({
             width={64}
             height={64}
             className="drop-shadow-lg"
+            unoptimized
           />
         </div>
       )}
